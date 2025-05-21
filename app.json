@@ -2,28 +2,55 @@
   "expo": {
     "name": "smart-homecare-app",
     "slug": "smart-homecare-app",
-    "version": "1.0.0",
+    "scheme": "smarthomecareapplication",
+    "version": "0.1.4",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./asset/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./asset/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#d0eaff"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.shc.smarthomecareapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
+        "foregroundImage": "./asset/adaptive-icon.png",
+        "backgroundColor": "#d0eaff"
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./asset/favicon.png"
+    },
+    "plugins": [
+  [
+    "@react-native-seoul/kakao-login",
+    {
+      "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495"
+    }
+  ],
+  [
+    "expo-build-properties",
+    {
+      "android": {
+        "kotlinVersion": "1.9.0",
+        "compileSdkVersion": 34,
+        "targetSdkVersion": 34,
+        "minSdkVersion": 24
+      }
+    }
+  ],
+  "expo-secure-store",
+  "expo-font"
+],
+    "extra": {
+      "eas": {
+        "projectId": "4d87156c-a8ab-40c7-bcf7-48a06ee13b79"
+      }
     }
   }
 }
