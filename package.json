@@ -27,7 +27,8 @@
     "react-native": "0.79.2",
     "react-native-root-toast": "^4.0.1",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-toast-message": "^2.3.0"
+    "react-native-toast-message": "^2.3.0",
+    "expo-build-properties": "~0.14.6"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
