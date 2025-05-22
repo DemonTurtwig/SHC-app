@@ -9,13 +9,22 @@ module.exports = function fixKotlinVersion(config) {
   return withDangerousMod(config, [
     'android',
     async (cfg) => {
-      const projectRoot = cfg.modRequest.projectRoot;
-      const androidDir = cfg.modRequest.platformProjectRoot;
+      const gradlePropsPath = path.join(cfg.modRequest.projectRoot, 'android', 'gradle.properties');
+      let props = await fs.readFile(gradlePropsPath, 'utf8');
 
-      const rootGradlePropsPath = path.join(projectRoot, 'gradle.properties');
-      const androidGradlePropsPath = path.join(androidDir, 'gradle.properties');
-      const buildGradlePath = path.join(androidDir, 'build.gradle');
+      const regex = /^kotlinVersion=.*$/m;
+      if (regex.test(props)) {
+        props = props.replace(regex, `kotlinVersion=${KOTLIN_VERSION}`);
+      } else {
+        props += `\nkotlinVersion=${KOTLIN_VERSION}\n`;
+      }
 
+      await fs.writeFile(gradlePropsPath, props);
+      return cfg;
+    },
+  ]);
+};
+  
       // ✅ Copy root gradle.properties to android/gradle.properties
       try {
         const rootProps = await fs.readFile(rootGradlePropsPath, 'utf8');
@@ -49,6 +58,3 @@ module.exports = function fixKotlinVersion(config) {
       }
 
       return cfg;
-    },
-  ]);
-};
