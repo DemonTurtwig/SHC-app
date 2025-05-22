@@ -35,7 +35,9 @@
         "enableJetifier": true
       },
       "gradleProperties": {
-        "kotlinVersion": "2.0.21"
+        "kotlinVersion": "2.0.21",
+        "android.useAndroidX": "true",
+        "android.enableJetifier": "true"
       }
     }
   ],
