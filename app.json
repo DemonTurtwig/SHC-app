@@ -23,27 +23,27 @@
     },
     "web": { "favicon": "./asset/favicon.png" },
     "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "kotlinVersion": "1.8.22",
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "minSdkVersion": 24
-          },
-          "gradleProperties": {
-            "kotlinVersion": "1.8.22"
-          }
-        }
-      ],
-      "./plugins/fix-kotlin-version",
-        [
-        "@react-native-seoul/kakao-login",
-        { "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495" }
-        ],
-      "expo-secure-store",
-      "expo-font"
+  [
+    "expo-build-properties",
+    {
+      "android": {
+        "kotlinVersion": "1.8.22",
+        "compileSdkVersion": 34,
+        "targetSdkVersion": 34,
+        "minSdkVersion": 24
+      },
+      "gradleProperties": {
+        "kotlinVersion": "1.8.22"
+      }
+    }
+  ],
+  "./plugins/fix-kotlin-version",
+  [
+    "@react-native-seoul/kakao-login",
+    { "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495" }
+  ],
+  "expo-secure-store",
+  "expo-font"
     ],
     "extra": {
       "eas": { "projectId": "4d87156c-a8ab-40c7-bcf7-48a06ee13b79" }
