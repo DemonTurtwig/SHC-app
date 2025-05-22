@@ -3,28 +3,50 @@ const { withDangerousMod } = require('@expo/config-plugins');
 const fs = require('fs').promises;
 const path = require('path');
 
-const TARGET_VERSION = '1.8.22';
+const TARGET = '1.8.22';            // <— change here when you upgrade Kotlin
 
-module.exports = function (config) {
+module.exports = function fixKotlin(config) {
   return withDangerousMod(config, [
     'android',
     async (cfg) => {
-      const file = path.join(
+      /* ---------- gradle.properties ---------- */
+      const propFile = path.join(
         cfg.modRequest.platformProjectRoot,
         'gradle.properties'
       );
-      let contents = await fs.readFile(file, 'utf8');
+      let props = await fs.readFile(propFile, 'utf8');
 
-      if (contents.includes('android.kotlinVersion')) {
-        contents = contents.replace(
-          /android\.kotlinVersion=.*/g,
-          `android.kotlinVersion=${TARGET_VERSION}`
-        );
+      // add or overwrite the property
+      if (props.match(/android\.kotlinVersion=/)) {
+        props = props.replace(/android\.kotlinVersion=.*/g,
+                              `android.kotlinVersion=${TARGET}`);
       } else {
-        contents += `\nandroid.kotlinVersion=${TARGET_VERSION}\n`;
+        props += `\nandroid.kotlinVersion=${TARGET}\n`;
+      }
+      await fs.writeFile(propFile, props);
+
+      /* ---------- build.gradle (root) ---------- */
+      const buildFile = path.join(
+        cfg.modRequest.platformProjectRoot,
+        'build.gradle'
+      );
+      let build = await fs.readFile(buildFile, 'utf8');
+
+      // 1) remove any hard-coded 1.5.10 classpath
+      build = build.replace(
+        /classpath\s+['"]org\.jetbrains\.kotlin:kotlin-gradle-plugin:1\.5\.10['"]\s*\n/gi,
+        ''
+      );
+
+      // 2) ensure the variable version line is present exactly once
+      if (!build.match(/kotlin-gradle-plugin:\$kotlinVersion/)) {
+        build = build.replace(
+          /classpath\s*\(\s*['"]org\.jetbrains\.kotlin:kotlin-gradle-plugin['"]\s*\)/,
+          `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")`
+        );
       }
 
-      await fs.writeFile(file, contents);
+      await fs.writeFile(buildFile, build);
       return cfg;
     },
   ]);
