@@ -41,6 +41,7 @@
           }
         }
       ],
+      "./plugins/fix-kotlin",
       "expo-secure-store",
       "expo-font"
     ],
