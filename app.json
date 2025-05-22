@@ -24,10 +24,6 @@
     "web": { "favicon": "./asset/favicon.png" },
     "plugins": [
       [
-        "@react-native-seoul/kakao-login",
-        { "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495" }
-      ],
-      [
         "expo-build-properties",
         {
           "android": {
@@ -42,6 +38,10 @@
         }
       ],
       "./plugins/fix-kotlin-version",
+        [
+        "@react-native-seoul/kakao-login",
+        { "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495" }
+        ],
       "expo-secure-store",
       "expo-font"
     ],
