@@ -33,7 +33,7 @@
             "minSdkVersion": 24
           },
           "gradleProperties": {
-            "android.kotlinVersion": "1.8.22"
+            "kotlinVersion": "1.8.22"
           }
         }
       ],
