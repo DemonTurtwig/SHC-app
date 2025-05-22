@@ -30,7 +30,9 @@
         "kotlinVersion": "2.0.21",
         "compileSdkVersion": 34,
         "targetSdkVersion": 34,
-        "minSdkVersion": 24
+        "minSdkVersion": 24,
+        "useAndroidX": true,
+        "enableJetifier": true
       },
       "gradleProperties": {
         "kotlinVersion": "2.0.21"

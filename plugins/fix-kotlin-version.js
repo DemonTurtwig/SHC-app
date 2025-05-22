@@ -3,7 +3,7 @@ const { withDangerousMod } = require('@expo/config-plugins');
 const fs   = require('fs').promises;
 const path = require('path');
 
-const KOTLIN_VERSION = '1.8.22';
+const KOTLIN_VERSION = '2.0.21';
 
 module.exports = function fixKotlinVersion(config) {
   return withDangerousMod(config, [
