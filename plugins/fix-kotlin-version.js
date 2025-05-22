@@ -20,7 +20,7 @@ module.exports = function fixKotlinVersion(config) {
       let props = await fs.readFile(rootPropsPath, 'utf8');
 
       /* 2️⃣  Remove any android.kotlinVersion line */
-      props = props.replace(/^android\.kotlinVersion=.*$/gm, '').trim();
+      props = props.replace(/^\s*android\.kotlinVersion=.*\r?\n?/gim, '');
 
       /* 3️⃣  Ensure plain kotlinVersion is present */
       if (!/^kotlinVersion=/m.test(props)) {
