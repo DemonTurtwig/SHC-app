@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./asset/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./asset/splash-icon.png",
       "resizeMode": "cover",
