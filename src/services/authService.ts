@@ -10,6 +10,6 @@ export const loginWithEmail = (email: string, password: string) =>
 export const loginWithKakao = async (accessToken: string) => {
   console.log('↗︎ sending token:', accessToken.slice(0,10), '…');
   return axios
-    .post(`${API}/api/kakao/login`, { accessToken })
+    .post(`${API}/kakao/login`, { accessToken })
     .then(res => res.data);
 };
