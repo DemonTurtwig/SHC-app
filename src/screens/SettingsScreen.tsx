@@ -12,9 +12,9 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
-
+import * as KakaoLogins from '@react-native-seoul/kakao-login';
 import { useAuth } from '../context/AuthContext';
-import { RootStackParamList } from '../navigation/AppNavigator';   // adjust path if needed
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 /* ---------- nav / route generics ---------- */
 type SetNav   = NativeStackNavigationProp<RootStackParamList>;
@@ -30,6 +30,7 @@ export default function SettingsScreen() {
     phone: '',
     address: '',
     isGuest: false,
+    provider: 'guest' as 'guest' | 'standard' | 'kakao',
   });
 
   /* ---------- editable fields ---------- */
@@ -50,6 +51,7 @@ export default function SettingsScreen() {
             phone: formatPhone(data.phone ?? ''),
             address: data.address ?? '',
             isGuest: data.isGuest ?? false,
+            provider: data.provider ?? 'standard',
           });
         } else if (guestId) {
           const { data } = await axios.get(
@@ -60,6 +62,7 @@ export default function SettingsScreen() {
             phone: formatPhone(data.phone ?? ''),
             address: data.address ?? '',
             isGuest: true,
+            provider: data.provider ?? 'guest',
           });
         }
       } catch {
@@ -123,6 +126,41 @@ export default function SettingsScreen() {
     return d.length === 11 ? `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}` : p;
   };
 
+  const handleUnlinkKakao = () => {
+  Alert.alert('카카오 연동 해제', '정말로 카카오 연동을 해제하시겠습니까?', [
+    { text: '취소', style: 'cancel' },
+    {
+      text: '해제',
+      style: 'destructive',
+      onPress: async () => {
+        try {
+          // 1.  device-side unlink
+          await KakaoLogins.unlink();            // <-- import * as KakaoLogins …
+
+          // 2.  server-side unlink & user cleanup
+          await axios.post(
+            'https://smart-homecare-backend.onrender.com/api/auth/kakao-unlink',
+            {},
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+
+          Alert.alert('완료', '카카오 연동이 해제되었습니다.', [
+            {
+              text: '확인',
+              onPress: () => {
+                logout();
+                navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+              },
+            },
+          ]);
+        } catch {
+          Alert.alert('오류', '연동 해제에 실패했습니다.');
+        }
+      },
+    },
+  ]);
+};
+
   /* ---------- UI ---------- */
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
@@ -151,7 +189,7 @@ export default function SettingsScreen() {
           <EditableRow
             icon={require('../assets/icons/phone-icon.png')}
             label="연락처"
-            value={userInfo.phone}
+            value={userInfo.phone || '미등록'}
             field="phone"
             keyboardType="phone-pad"
             editField={editField}
@@ -162,7 +200,7 @@ export default function SettingsScreen() {
           />
 
           {/* Password */}
-          { !userInfo.isGuest && (
+          { userInfo.provider === 'standard' && (
             <EditableRow
               icon={require('../assets/icons/password.png')}
               label="비밀번호"
@@ -180,24 +218,31 @@ export default function SettingsScreen() {
           {/* Address */}
           <View style={styles.row}>
             <Image source={require('../assets/icons/home.png')} style={styles.icon} />
-            <Text style={styles.label}>주소: {userInfo.address}</Text>
+            <Text style={styles.label}>주소: {userInfo.address || '미등록'}</Text>
             <TouchableOpacity
               style={styles.changeBtn}
               onPress={() =>
                 navigation.navigate('AddressSearchScreen', {
-                  onSelect: async addr => {
-                    try {
-                      const { data } = await axios.patch(
-                        '/api/users/me',
-                        { address: addr },
-                        {
-                          baseURL: 'https://smart-homecare-backend.onrender.com',
-                          headers: { Authorization: `Bearer ${token}` },
-                        },
-                      );
-                      setUserInfo(cur => ({ ...cur, address: data.address }));
+                onSelect: async addr => {
+                  try {
+                      const url =
+                        userInfo.provider === 'guest'
+                        ? `/api/guests/${guestId}`
+                            : '/api/users/me';
+                          const { data } = await axios.patch(
+                              url,
+                              { address: addr },
+                          {
+                            baseURL: 'https://smart-homecare-backend.onrender.com',
+                              headers:
+                                userInfo.provider === 'guest'
+                                  ? undefined
+                                : { Authorization: `Bearer ${token}` },
+                            },
+                        );
+                  setUserInfo(cur => ({ ...cur, address: data.address }));
                     } catch {
-                      Alert.alert('오류', '주소 저장 실패');
+                   Alert.alert('오류', '주소 저장 실패');
                     }
                   },
                 })
@@ -208,7 +253,7 @@ export default function SettingsScreen() {
           </View>
 
           {/* Logout */}
-          { !userInfo.isGuest && (
+          { userInfo.provider !== 'guest' && (
           <SimpleRow
             icon={require('../assets/icons/logout.png')}
             label="로그아웃"
@@ -223,10 +268,10 @@ export default function SettingsScreen() {
           {/* Delete */}
           <SimpleRow
             icon={require('../assets/icons/delete-user.png')}
-            label="회원 탈퇴"
-            actionLabel="삭제"
+            label={userInfo.provider === 'kakao' ? '카카오 연동 해제' : '회원 탈퇴'}
+            actionLabel={userInfo.provider === 'kakao' ? '연동 해제' : '삭제'}
             actionColor="#d32f2f"
-            onPress={handleDeleteAccount}
+            onPress={userInfo.provider === 'kakao'? handleUnlinkKakao: handleDeleteAccount}
           />
         </View>
 

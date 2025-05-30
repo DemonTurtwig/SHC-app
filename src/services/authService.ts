@@ -1,4 +1,3 @@
-// src/services/authService.ts
 import axios from 'axios';
 
 // Use ONE base URL (no /api)

@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 import axios from 'axios';
 import { loginWithEmail, loginWithKakao } from '../services/authService';
+import * as KakaoLogins from '@react-native-seoul/kakao-login';
 
 export interface ClientUser {
   _id: string;
@@ -11,8 +12,10 @@ export interface ClientUser {
   name: string;
   phone: string;
   email?: string;
+  provider: string;
   isAdmin?: boolean;
-  address: string;
+  address?: string;
+  addressDetail?: string;
   isGuest?: boolean;
 }
 
@@ -139,17 +142,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-  const loginKakao = async (accessToken: string) => {
-    try {
-      const { token: jwt } = await loginWithKakao(accessToken);
-      await SecureStore.setItemAsync('token', jwt);
-      setToken(jwt);
-      setIsGuestMode(false);
-    } catch (err: any) {
-      console.error('Kakao login error:', err);
-      Alert.alert('카카오 로그인 실패', err.message || '다시 시도해주세요.');
+const loginKakao = async (accessToken: string) => {
+   try {
+    const { token: jwt, user, needsPhoneUpdate } = await loginWithKakao(accessToken);
+
+    await SecureStore.setItemAsync('token', jwt);
+    setToken(jwt);
+    setCurrentUser(user);
+    setIsGuestMode(false);
+
+    if (needsPhoneUpdate) {
+      Alert.alert(
+        '전화번호 필요',
+        '내 정보 → 전화번호 메뉴에서 휴대폰 번호를 등록해주세요.',
+      );
     }
-  };
+  } catch (err: any) {
+    console.error('Kakao login error:', err);
+    Alert.alert('카카오 로그인 실패', err.message || '다시 시도해주세요.');
+  }
+};
 
   /* Logout */
   const logout = async () => {
@@ -166,19 +178,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   /* Delete user (탈퇴) */
   const deleteUser = async () => {
-    if (!token || !currentUser) return;
-    try {
+  if (!token || !currentUser) return;
+
+  try {
+    if (currentUser.provider === 'kakao') {
+      await axios.post('https://smart-homecare-backend.onrender.com/api/kakao/unlink', {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
       await axios.delete(`https://smart-homecare-backend.onrender.com/api/users/${currentUser._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      Alert.alert('계정 삭제', '계정이 삭제되었습니다.');
-      logout();
-    } catch (err) {
-      console.error('Delete user failed:', err);
-      Alert.alert('삭제 실패', '계정을 삭제하지 못했습니다.');
     }
-  };
 
+    Alert.alert('계정 삭제', '계정이 삭제되었습니다.');
+    logout();
+  } catch (err) {
+    console.error('Delete user failed:', err);
+    Alert.alert('삭제 실패', '계정을 삭제하지 못했습니다.');
+  }
+};
   /* Provider value */
   return (
     <AuthContext.Provider
