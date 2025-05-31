@@ -139,7 +139,7 @@ export default function SettingsScreen() {
 
           // 2.  server-side unlink & user cleanup
           await axios.post(
-            'https://smart-homecare-backend.onrender.com/api/auth/kakao-unlink',
+            'https://smart-homecare-backend.onrender.com/api/kakao-unlink',
             {},
             { headers: { Authorization: `Bearer ${token}` } },
           );

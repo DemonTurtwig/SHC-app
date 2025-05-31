@@ -13,7 +13,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#d0eaff"
     },
-    "ios": { "supportsTablet": true },
+    "ios": {
+      "supportsTablet": true
+    },
     "android": {
       "package": "com.shc.smarthomecareapp",
       "adaptiveIcon": {
@@ -21,36 +23,48 @@
         "backgroundColor": "#d0eaff"
       }
     },
-    "web": { "favicon": "./asset/favicon.png" },
+    "web": {
+      "favicon": "./asset/favicon.png"
+    },
     "plugins": [
-  [
-    "expo-build-properties",
-    {
-      "android": {
-        "kotlinVersion": "2.0.21",
-        "compileSdkVersion": 35,
-        "targetSdkVersion": 35,
-        "minSdkVersion": 24,
-        "useAndroidX": true,
-        "enableJetifier": true
-      },
-      "gradleProperties": {
-        "kotlinVersion": "2.0.21",
-        "android.useAndroidX": "true",
-        "android.enableJetifier": "true"
-      }
-    }
-  ],
-  "./plugins/fix-kotlin-version",
-  [
-    "@react-native-seoul/kakao-login",
-    { "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495" }
-  ],
-  "expo-secure-store",
-  "expo-font"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21",
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24,
+            "useAndroidX": true,
+            "enableJetifier": true
+          },
+          "gradleProperties": {
+            "kotlinVersion": "2.0.21",
+            "android.useAndroidX": "true",
+            "android.enableJetifier": "true"
+          }
+        }
+      ],
+      "./plugins/fix-kotlin-version",
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "ebe488acefac3ddda8c04afc669b2495"
+        }
+      ],
+      "expo-secure-store",
+      "expo-font"
     ],
     "extra": {
-      "eas": { "projectId": "4d87156c-a8ab-40c7-bcf7-48a06ee13b79" }
+      "eas": {
+        "projectId": "4d87156c-a8ab-40c7-bcf7-48a06ee13b79"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4d87156c-a8ab-40c7-bcf7-48a06ee13b79"
     }
   }
 }

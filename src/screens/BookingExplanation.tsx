@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -39,30 +39,44 @@ type ExpRoute = RouteProp<RootStackParamList, 'BookingExplanation'>;
 type ExpNav   = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BookingExplanation() {
-  /* route + nav with generics */
+  /* route + nav */
   const route = useRoute<ExpRoute>();
   const navigation = useNavigation<ExpNav>();
 
-  /* params are optional in stack list */
   const {
     serviceType = {} as ServiceType,
     subtype = {} as Subtype,
   } = route.params ?? {};
 
-  /* ---------- tier & part state ---------- */
-  const [selectedTier, setSelectedTier] = useState(
+  /* ---------------- tier & part state ---------------- */
+  const [selectedTierKey, setSelectedTierKey] = useState<string>(
     serviceType.tiers?.[0]?.tier ?? '',
   );
-  const currentTier =
-    serviceType.tiers?.find((t: { tier: any; }) => t.tier === selectedTier) ?? null;
 
-  const [selectedPartId, setSelectedPartId] = useState<string | null>(
-    currentTier?.assets.parts?.[0]?.partId ?? null,
+  /** currently selected tier object (memo for perf / consistency) */
+  const currentTier = useMemo(
+    () =>
+      serviceType.tiers?.find(t => t.tier === selectedTierKey) ??
+      null,
+    [serviceType.tiers, selectedTierKey],
   );
-  const selectedPart =
-    currentTier?.assets.parts?.find((p: { partId: string | null; }) => p.partId === selectedPartId) ?? null;
 
-  /* ---------- option selection ---------- */
+  const [selectedPartId, setSelectedPartId] = useState<string | null>(null);
+
+  /* whenever tier changes → reset selectedPartId to first part */
+  useEffect(() => {
+    const firstPartId = currentTier?.assets.parts?.[0]?.partId ?? null;
+    setSelectedPartId(firstPartId);
+  }, [currentTier]);
+
+  const selectedPart = useMemo(
+    () =>
+      currentTier?.assets.parts?.find(p => p.partId === selectedPartId) ??
+      null,
+    [currentTier, selectedPartId],
+  );
+
+  /* ---------------- option selection ---------------- */
   interface SelectedOption {
     _id: string;
     key: string;
@@ -76,7 +90,7 @@ export default function BookingExplanation() {
     Record<string, SelectedOption>
   >({});
 
-  /* ---------- block system back button ---------- */
+  /* ---------------- block physical back ---------------- */
   useFocusEffect(
     useCallback(() => {
       const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
@@ -85,42 +99,33 @@ export default function BookingExplanation() {
   );
 
   const handleBack = () => {
-    setTimeout(() => {
-      Alert.alert(
-        '경고',
-        '서비스 선택부터 다시 시작해야 합니다. 그래도 돌아가시겠습니까?',
-        [
-          { text: '취소', style: 'cancel' },
-          {
-            text: '돌아가기',
-            style: 'destructive',
-            onPress: () =>
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'BookingServiceSelection' }],
-              }),
-          },
-        ],
-      );
-    }, 0);
+    Alert.alert('경고', '서비스 선택부터 다시 시작해야 합니다.', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '돌아가기',
+        style: 'destructive',
+        onPress: () =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'BookingServiceSelection' }],
+          }),
+      },
+    ]);
   };
 
-  /* ---------- confirm ---------- */
+  /* ---------------- confirm ---------------- */
   const handleConfirm = () => {
-    if (!serviceType.tiers?.length) {
-      Alert.alert('오류', '유효한 서비스 정보가 없습니다.');
+    if (!currentTier) {
+      Alert.alert('오류', '티어를 선택해 주세요.');
       return;
     }
 
-    const allSelected = (serviceType.options ?? []).every(
-      opt => !!selectedOptions[opt.key],
-    );
-    if (!allSelected) {
+    if ((serviceType.options ?? []).some(opt => !selectedOptions[opt.key])) {
       Alert.alert('옵션 선택 필요', '모든 옵션을 선택해 주세요.');
       return;
     }
 
-    const selectedOptionData = (serviceType.options ?? []).map(opt => {
+    const optionPayload = (serviceType.options ?? []).map(opt => {
       const sel = selectedOptions[opt.key];
       return (
         sel ?? {
@@ -135,27 +140,51 @@ export default function BookingExplanation() {
       );
     });
 
-    const tierData = serviceType.tiers.find((t: { tier: any; }) => t.tier === selectedTier);
-    if (!tierData) {
-      Alert.alert('오류', '티어를 선택해 주세요.');
-      return;
-    }
-
+    /* route */
     navigation.navigate('Confirm', {
       serviceType,
       subtype,
       tier: {
-        ...tierData,
-        tier: tierData.tier === 'standard-others' ? 'standard' : tierData.tier,
+        ...currentTier,
+        tier:
+          currentTier.tier === 'standard-others'
+            ? 'standard'
+            : currentTier.tier,
       },
-      selectedOptions: selectedOptionData,
+      selectedOptions: optionPayload,
     });
   };
 
   /* ---------- blueprint images map (unchanged) ---------- */
   const blueprintMap: Record<string, any> = {
     'bpbyukgulyee - standard.png': require('../assets/acpic/bpbyukgulyee - standard.png'),
-    // … other entries unchanged …
+    'bpbyukgulyee - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
+    'bpbyukgulyee - premium': require('../assets/acpic/bpbyukgulyee - premium.png'),
+    'bpbyukgulyee.png': require('../assets/acpic/bpbyukgulyee.png'),
+    'bpstandairconditioner.png': require('../assets/acpic/bpstandairconditioner.png'),
+    'bpstandairconditioner - standard.png': require('../assets/acpic/bpstandairconditioner - standard.png'),
+    'bpstandairconditioner - deluxe.png': require('../assets/acpic/bpstandairconditioner - deluxe.png'),
+    'bpstandairconditioner - premium.png': require('../assets/acpic/bpstandairconditioner - premium.png'),
+    'bp2in1.png': require('../assets/acpic/bp2in1.png'),
+    'bp2in1 - standard.png': require('../assets/acpic/bp2in1 - standard.png'),
+    'bp2in1 - deluxe & premium': require('../assets/acpic/bp2in1 - deluxe & premium.png'),
+    '1way.png': require('../assets/acpic/1way.png'),
+    'bp1way - standard.png': require('../assets/acpic/bp1way - standard.png'),
+    'bp1way - deluxe.png': require('../assets/acpic/bp1way - deluxe.png'),
+    'bp1way - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
+    '2way.png': require('../assets/acpic/2way.png'),
+    '2way - standard.png': require('../assets/acpic/2way - standard.png'),
+    '2way - deluxe.png': require('../assets/acpic/2way - deluxe.png'),
+    '2way - premium.png': require('../assets/acpic/2way - premium.png'),
+    '4way.png': require('../assets/acpic/4way.png'),
+    '4way - standard.png': require('../assets/acpic/4way - standard.png'),
+    '4way - deluxe.png': require('../assets/acpic/4way - deluxe.png'),
+    '4way - premium.png': require('../assets/acpic/4way - premium.png'),
+    'bpchungangonehyung.png': require('../assets/acpic/bpchungangonehyung.png'),
+    'bpchungangonehyung - standard.png': require('../assets/acpic/bpchungangonehyung - standard.png'),
+    'bpchungangonehyung - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
+    'bpchungangonehyung - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
+    'bpshilwaegi - standard & deluxe.png': require('../assets/acpic/bpshilwaegi - standard & deluxe.png'),
     'bpshilwaegi - 2dan': require('../assets/acpic/bpshilwaegi - 2dan.png'),
   };
 
@@ -163,6 +192,7 @@ export default function BookingExplanation() {
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.container}>
+        {/* back */}
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Image
             source={require('../assets/icons/back-button.png')}
@@ -173,49 +203,42 @@ export default function BookingExplanation() {
         <Text style={styles.title}>{serviceType.label ?? '서비스'} 안내</Text>
         <Text style={styles.subTitle}>세부 옵션 및 세척 부위를 확인하세요</Text>
 
-        {/* Tier buttons */}
+        {/* tiers */}
         <View style={styles.tierList}>
-  {(serviceType.tiers ?? []).map((
-      tier /* <-- let TS infer it as Tier */
-  ) => (
-    <TouchableOpacity
-      key={String(tier.tier)}                     /* key must be string   */
-      style={[
-        styles.tierButton,
-        selectedTier === tier.tier && styles.tierActive,
-      ]}
-      onPress={() => {
-        setSelectedTier(tier.tier);
-        setSelectedPartId(
-          tier.assets.parts?.[0]?.partId ?? null   /* already null-safe   */
-        );
-      }}
-    >
-      <Text
-        style={[
-          styles.tierLabel,
-          selectedTier === tier.tier && styles.tierLabelSelected,
-        ]}
-      >
-        {(tier.tier === 'standard-others' ? 'STANDARD' : tier.tier)
-          .toUpperCase()}
-      </Text>
+          {(serviceType.tiers ?? []).map(tier => {
+            const active = selectedTierKey === tier.tier;
+            return (
+              <TouchableOpacity
+                key={tier.tier}
+                style={[
+                  styles.tierButton,
+                  active && styles.tierActive,
+                ]}
+                onPress={() => setSelectedTierKey(tier.tier)}
+              >
+                <Text
+                  style={[
+                    styles.tierLabel,
+                    active && styles.tierLabelSelected,
+                  ]}
+                >
+                  {(tier.tier === 'standard-others' ? 'STANDARD' : tier.tier).toUpperCase()}
+                </Text>
+                <Text
+                  style={[
+                    styles.tierPrice,
+                    active && styles.tierPriceSelected,
+                  ]}
+                >
+                  ₩{tier.price.toLocaleString()}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
-      <Text
-        style={[
-          styles.tierPrice,
-          selectedTier === tier.tier && styles.tierPriceSelected,
-        ]}
-      >
-        ₩{tier.price.toLocaleString()}
-      </Text>
-    </TouchableOpacity>
-  ))}
-</View>
-
+        {/* blueprint */}
         <Text style={styles.title}>설계도</Text>
-
-        {/* Blueprint */}
         <View style={styles.blueprintContainer}>
           {currentTier?.assets.blueprint &&
             blueprintMap[currentTier.assets.blueprint] && (
@@ -226,30 +249,35 @@ export default function BookingExplanation() {
             )}
         </View>
 
-        {/* Parts */}
-        <View style={styles.partList}>
-          {(currentTier?.assets.parts ?? []).map((part: { partId: string | number | bigint | ((prevState: string | null) => string | null) | null | undefined; label: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }) => (
-            <TouchableOpacity
-              key={String(part.partId)}
-              style={[
-                styles.partButton,
-                selectedPartId === part.partId && styles.partActive,
-              ]}
-              onPress={() => part.partId && setSelectedPartId(String(part.partId))}
-            >
-              <Text
-                style={[
-                  styles.partLabel,
-                  selectedPartId === part.partId && styles.partLabelActive,
-                ]}
-              >
-                {part.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* part buttons */}
+        {currentTier?.assets.parts?.length ? (
+          <View style={styles.partList}>
+            {currentTier.assets.parts.map(part => {
+              const active = selectedPartId === part.partId;
+              return (
+                <TouchableOpacity
+                  key={part.partId}
+                  style={[
+                    styles.partButton,
+                    active && styles.partActive,
+                  ]}
+                  onPress={() => setSelectedPartId(part.partId)}
+                >
+                  <Text
+                    style={[
+                      styles.partLabel,
+                      active && styles.partLabelActive,
+                    ]}
+                  >
+                    {part.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : null}
 
-        {/* Preview */}
+        {/* preview */}
         {selectedPart && (
           <View style={styles.previewBox}>
             <Image source={{ uri: selectedPart.url }} style={styles.previewImage} />
@@ -259,8 +287,8 @@ export default function BookingExplanation() {
           </View>
         )}
 
-        {/* Options */}
-        {serviceType.options?.length > 0 && (
+        {/* options */}
+        {serviceType.options?.length ? (
           <View style={styles.optionsBox}>
             <Text style={styles.subTitle}>선택 가능한 옵션</Text>
             {serviceType.options.map(opt => (
@@ -306,7 +334,7 @@ export default function BookingExplanation() {
               </View>
             ))}
           </View>
-        )}
+        ) : null}
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleConfirm}>
           <Text style={styles.submitTxt}>예약 진행하기</Text>
@@ -315,6 +343,7 @@ export default function BookingExplanation() {
     </LinearGradient>
   );
 }
+
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
   container: {
