@@ -33,7 +33,6 @@ export default function LoginScreen() {
         }
       }, 100);
     }
-     console.log('🔍 KakaoLogins object:', KakaoLogins);
       if (!KakaoLogins || typeof KakaoLogins.login !== 'function') {
     alert('Kakao module is not linked. 😡');
   }
@@ -56,7 +55,6 @@ const handleKakaoNativeLogin = async () => {
     let bestAddr: { baseAddress?: string; detailAddress?: string } | null = null;
     try {
       const ship = await (KakaoLogins as any).shippingAddresses();
-      console.log('[Kakao] shippingAddresses() →', ship);
 
       const list = ship?.shippingAddresses ?? [];
       const picked = list.find((a: any) => a.isDefault) ?? list[0];
@@ -66,9 +64,7 @@ const handleKakaoNativeLogin = async () => {
           detailAddress: picked.detailAddress ?? '',
         };
       }
-      console.log('[Kakao] bestAddr →', bestAddr);
     } catch (e) {
-      console.log('[Kakao] shippingAddresses() failed →', e);
     }
 
     /* 3️⃣ send BOTH token + address */
