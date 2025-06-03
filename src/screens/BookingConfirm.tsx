@@ -151,9 +151,36 @@ export default function BookingConfirm() {
 
   /* ---------- UI ---------- */
   return (
-    <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
+     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* … (unchanged header + summary code) … */}
+        <Text style={styles.title}>예약 확인</Text>
+
+        {/*--- Service summary ---*/}
+        <View style={styles.receiptBox}>
+          <Text style={styles.summaryRow}><Text style={styles.label}>기기:</Text> {subtype.name}</Text>
+          <Text style={styles.summaryRow}><Text style={styles.label}>서비스:</Text> {serviceType.label}</Text>
+          <Text style={styles.summaryRow}><Text style={styles.label}>티어:</Text> {tier.tier.toUpperCase()}</Text>
+          <Text style={styles.summaryRow}><Text style={styles.label}>기본 가격:</Text> ₩{tier.price.toLocaleString()}</Text>
+        </View>
+
+        {/*--- Options ---*/}
+        {selectedOptions.length > 0 && (
+          <View style={styles.receiptBox}>
+            <Text style={styles.sectionTitle}>선택한 옵션</Text>
+            {selectedOptions.map(opt => (
+              <Text key={opt.key} style={styles.optionRow}>
+                {opt.label} ({opt.selectedLabel}): + ₩{opt.extraCost}
+              </Text>
+            ))}
+          </View>
+        )}
+
+        {/*--- Total ---*/}
+        <View style={styles.totalBox}>
+          <Text style={styles.totalLabel}>총 가격</Text>
+          <Text style={styles.totalValue}>₩ {totalPrice.toLocaleString()}</Text>
+        </View>
+
 
         {/* --- Date picker --- */}
         <TouchableOpacity style={styles.dateButton} onPress={() => setShowPicker(true)}>
