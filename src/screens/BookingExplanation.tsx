@@ -18,7 +18,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { RootStackParamList, ServiceType, Subtype, Tier } from '../navigation/AppNavigator';
+import { RootStackParamList, ServiceType, Subtype } from '../navigation/AppNavigator';
 
 export interface Choice         { label: string; value: string; extraCost: number; extraTime: number }
 export interface Option         { _id: string; key: string; label: string; choices: Choice[] }
@@ -78,7 +78,7 @@ export default function BookingExplanation() {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, SelectedOption>
   >({});
-
+  const subKey = (subtype as any).name ?? ''; 
   /* ---------------- block physical back ---------------- */
   useFocusEffect(
     useCallback(() => {
@@ -160,7 +160,7 @@ export default function BookingExplanation() {
     '1way.png': require('../assets/acpic/1way.png'),
     'bp1way - standard.png': require('../assets/acpic/bp1way - standard.png'),
     'bp1way - deluxe.png': require('../assets/acpic/bp1way - deluxe.png'),
-    'bp1way - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
+    'bp1way - premium.png': require('../assets/acpic/bp1way - premium.png'),
     '2way.png': require('../assets/acpic/2way.png'),
     '2way - standard.png': require('../assets/acpic/2way - standard.png'),
     '2way - deluxe.png': require('../assets/acpic/2way - deluxe.png'),
@@ -176,6 +176,38 @@ export default function BookingExplanation() {
     'bpshilwaegi - standard & deluxe.png': require('../assets/acpic/bpshilwaegi - standard & deluxe.png'),
     'bpshilwaegi - 2dan.png': require('../assets/acpic/bpshilwaegi - 2dan.png'),
   };
+
+  const blueprintKey = useMemo(() => {
+  if (!currentTier) return null;
+
+  // 1️⃣ If the tier already carries its own blueprint and we have it locally → use it.
+  if (
+    currentTier.assets?.blueprint &&
+    blueprintMap[currentTier.assets.blueprint]
+  ) {
+    return currentTier.assets.blueprint;
+  }
+
+  // 2️⃣ When the tier is “standard-others”, fall back to a generic picture that
+  if (currentTier.tier === 'standard-others') {
+  const genericBySubtype: Record<string, string> = {
+    byukgulyee:              'bpbyukgulyee.png',
+    standairconditioner:     'bpstandairconditioner.png',
+    '2in1':                  'bp2in1.png',
+    '1wayairconditioner':    '1way.png',
+    '2wayairconditioner':    '2way.png',
+    '4wayairconditioner':    '4way.png',
+    chungangonehyungairconditioner: 'bpchungangonehyung.png',
+  };
+
+  /* 👉 here */
+  return genericBySubtype[subKey] ?? null;
+}
+
+
+  // 3️⃣ Anything else → no picture.
+  return null;
+}, [currentTier, subtype]);
 
   /* ---------- UI (identical to your file) ---------- */
   return (
@@ -229,13 +261,9 @@ export default function BookingExplanation() {
         {/* blueprint */}
         <Text style={styles.title}>설계도</Text>
         <View style={styles.blueprintContainer}>
-          {currentTier?.assets.blueprint &&
-            blueprintMap[currentTier.assets.blueprint] && (
-              <Image
-                source={blueprintMap[currentTier.assets.blueprint]}
-                style={styles.blueprint}
-              />
-            )}
+          {blueprintKey && blueprintMap[blueprintKey] && (
+          <Image source={blueprintMap[blueprintKey]} style={styles.blueprint} />
+          )}
         </View>
 
         {/* part buttons */}
