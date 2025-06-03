@@ -19,19 +19,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
-
-import { RootStackParamList, ServiceType } from '../navigation/AppNavigator';
-
-/* ---------- minimal local interfaces ---------- */
-interface ServiceOption {
-  name: string;
-}
-interface Subtype {
-  _id: string;
-  name: string;
-  category: { name: string };
-  serviceOptions: ServiceOption[];
-}
+import { RootStackParamList, ServiceType, Subtype } from '../navigation/AppNavigator';
 
 /* ---------- nav / route generics ---------- */
 type SubtypeRoute = RouteProp<RootStackParamList, 'BookingSubtypeSelection'>;
@@ -50,23 +38,23 @@ const subtypeIcons: Record<string, any> = {
 
 export default function BookingSubtypeSelect() {
   const navigation = useNavigation<SubtypeNav>();
-  const route      = useRoute<SubtypeRoute>();
+  const route = useRoute<SubtypeRoute>();
 
-  /* param guaranteed by RootStackParamList */
-  const { selectedServiceType } = route.params;
+  const { selectedServiceType, category = 'aircon' } = route.params;
 
   const [subtypes, setSubtypes] = useState<Subtype[]>([]);
-  const [loading,  setLoading]  = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  /* fetch list once */
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get('https://smart-homecare-backend.onrender.com/api/booking/initialize');
-        if (!Array.isArray(data.subtypes)) throw new Error('subtypes is not array');
-        const filtered = data.subtypes.filter(
-          (s: Subtype) => s.category.name === 'aircon',
-        );
+        if (!Array.isArray(data.subtypes)) throw new Error('subtypes는 array가 아닙니다.');
+
+        const filtered = data.subtypes.filter((s: Subtype) => {
+          return typeof s.category !== 'string' && s.category?.name === category;
+        });
+
         setSubtypes(filtered);
       } catch (err) {
         console.error('Failed to load subtypes:', err);
@@ -74,9 +62,8 @@ export default function BookingSubtypeSelect() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [category]);
 
-  /* hardware-back block */
   useFocusEffect(
     useCallback(() => {
       const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
@@ -84,30 +71,23 @@ export default function BookingSubtypeSelect() {
     }, []),
   );
 
-  /* handlers */
   const handleBack = () =>
     navigation.reset({ index: 0, routes: [{ name: 'BookingServiceSelection' }] });
 
   const handleSelect = (sub: Subtype) => {
-    
     const svc = sub.serviceOptions.find(s => s.name === selectedServiceType);
+
     if (!svc) {
       Alert.alert('오류', `${selectedServiceType} 서비스는 이 기기에서 지원되지 않습니다.`);
       return;
     }
-      const svcFull = {
-    _id: 'temp',
-    label: svc.name,
-    tiers: [],
-    options: [],
-    } as ServiceType;
+
     navigation.navigate('BookingExplanation', {
       subtype: sub,
-      serviceType: svcFull,
+      serviceType: svc,
     });
   };
 
-  /* ---------- UI ---------- */
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <View style={styles.header}>
@@ -130,7 +110,7 @@ export default function BookingSubtypeSelect() {
             contentContainerStyle={styles.horizontalContainer}
           >
             {subtypes.length === 0 ? (
-              <Text style={styles.noDataText}>등록된 에어컨 종류가 없습니다.</Text>
+              <Text style={styles.noDataText}>등록된 정보가 없습니다.</Text>
             ) : (
               subtypes.map(sub => (
                 <TouchableOpacity
@@ -139,10 +119,7 @@ export default function BookingSubtypeSelect() {
                   onPress={() => handleSelect(sub)}
                 >
                   <Image
-                    source={
-                      subtypeIcons[sub.name] ??
-                      require('../assets/icons/byukgulyee-icon.png')
-                    }
+                    source={subtypeIcons[sub.name] ?? require('../assets/icons/byukgulyee-icon.png')}
                     style={styles.cardIcon}
                   />
                   <Text style={styles.cardText}>{sub.name}</Text>
@@ -155,6 +132,7 @@ export default function BookingSubtypeSelect() {
     </LinearGradient>
   );
 }
+
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },

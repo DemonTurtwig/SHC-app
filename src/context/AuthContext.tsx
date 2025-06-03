@@ -17,6 +17,7 @@ export interface ClientUser {
   address?: string;
   addressDetail?: string;
   isGuest?: boolean;
+  kakaoId?: string;
 }
 
 interface AuthContextType {
@@ -29,13 +30,8 @@ interface AuthContextType {
   /* actions */
   setToken: (t: string | null) => void;
   loginEmail: (email: string, password: string) => Promise<void>;
-  loginKakao: (accessToken: string) => Promise<void>;
-  registerGuest: (
-    name: string,
-    phone: string,
-    address: string,
-    addressDetail?: string
-  ) => Promise<void>;
+  loginKakao: ( accessToken: string, shippingAddr?: {baseAddress?:  string; detailAddress?: string; } | null,) => Promise<void>;
+  registerGuest: (name: string, phone: string, address: string, addressDetail?: string) => Promise<void>;
   logout: () => void;
   deleteUser: () => Promise<void>;
 }
@@ -142,9 +138,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-const loginKakao = async (accessToken: string) => {
+const loginKakao = async (accessToken: string, shippingAddr?: { baseAddress?: string; detailAddress?: string } | null,) => {
    try {
-    const { token: jwt, user, needsPhoneUpdate } = await loginWithKakao(accessToken);
+     const { token: jwt, user, needsPhoneUpdate } =  await loginWithKakao(accessToken, shippingAddr);
 
     await SecureStore.setItemAsync('token', jwt);
     setToken(jwt);
@@ -182,11 +178,11 @@ const loginKakao = async (accessToken: string) => {
 
   try {
     if (currentUser.provider === 'kakao') {
-      await axios.post('https://smart-homecare-backend.onrender.com/api/kakao/unlink', {}, {
+      await axios.delete('https://smart-homecare-backend.onrender.com/api/kakao/delete', {
         headers: { Authorization: `Bearer ${token}` },
       });
     } else {
-      await axios.delete(`https://smart-homecare-backend.onrender.com/api/users/${currentUser._id}`, {
+      await axios.delete(`https://smart-homecare-backend.onrender.com/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
     }
@@ -198,6 +194,7 @@ const loginKakao = async (accessToken: string) => {
     Alert.alert('삭제 실패', '계정을 삭제하지 못했습니다.');
   }
 };
+
   /* Provider value */
   return (
     <AuthContext.Provider

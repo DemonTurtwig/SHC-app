@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ActivityIndicator,
   TextInput, Image, TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as KakaoLogins from '@react-native-seoul/kakao-login';
@@ -41,16 +42,42 @@ export default function LoginScreen() {
   /* --- email login handler --- */
   const handleEmailLogin = () => loginEmail(email, password);
 
-  /* --- native Kakao login --- */
-  const handleKakaoNativeLogin = async () => {
+
+/* -- native Kakao login + scopes + debug logging -- */
+const handleKakaoNativeLogin = async () => {
+  try {
+    /* 1️⃣ sign-in (+ scopes) */
+    const loginRes = await (KakaoLogins as any).loginWithKakaoAccount({
+      scopes: ['profile_nickname', 'phone_number', 'shipping_address'],
+    });
+    let { accessToken } = loginRes;
+
+    /* 2️⃣ read the address list (may be empty) */
+    let bestAddr: { baseAddress?: string; detailAddress?: string } | null = null;
     try {
-      const result = await KakaoLogins.login();
-      const accessToken = result.accessToken;
-      await loginKakao(accessToken); // Sends token to backend
-    } catch (err) {
-      console.error('Kakao native login error:', err);
+      const ship = await (KakaoLogins as any).shippingAddresses();
+      console.log('[Kakao] shippingAddresses() →', ship);
+
+      const list = ship?.shippingAddresses ?? [];
+      const picked = list.find((a: any) => a.isDefault) ?? list[0];
+      if (picked?.baseAddress) {
+        bestAddr = {
+          baseAddress:  picked.baseAddress,
+          detailAddress: picked.detailAddress ?? '',
+        };
+      }
+      console.log('[Kakao] bestAddr →', bestAddr);
+    } catch (e) {
+      console.log('[Kakao] shippingAddresses() failed →', e);
     }
-  };
+
+    /* 3️⃣ send BOTH token + address */
+   await loginKakao(accessToken, bestAddr);
+  } catch (err) {
+    console.error('Kakao native login error:', err);
+    Alert.alert('로그인 실패', '카카오 로그인 중 오류가 발생했습니다.');
+  }
+};
 
   if (isLoading) {
     return (

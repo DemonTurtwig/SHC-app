@@ -18,21 +18,10 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { RootStackParamList, Subtype } from '../navigation/AppNavigator';
+import { RootStackParamList, ServiceType, Subtype, Tier } from '../navigation/AppNavigator';
 
-/* --------- minimal local types (only fields we read) --------- */
-export interface TierAssetPart { partId: string; label: string; url: string }
-export interface TierAsset      { blueprint?: string; parts?: TierAssetPart[] }
-export interface Tier           { tier: string; price: number; assets: TierAsset }
 export interface Choice         { label: string; value: string; extraCost: number; extraTime: number }
 export interface Option         { _id: string; key: string; label: string; choices: Choice[] }
-
-export interface ServiceType {
-  _id: string;
-  label: string;
-  tiers: Tier[];
-  options: Option[];
-}
 
 /* --------- stack generics --------- */
 type ExpRoute = RouteProp<RootStackParamList, 'BookingExplanation'>;
@@ -61,7 +50,7 @@ export default function BookingExplanation() {
     [serviceType.tiers, selectedTierKey],
   );
 
-  const [selectedPartId, setSelectedPartId] = useState<string | null>(null);
+  const [selectedPartId, setSelectedPartId] = useState<string | null | undefined>(null);
 
   /* whenever tier changes → reset selectedPartId to first part */
   useEffect(() => {
@@ -159,7 +148,7 @@ export default function BookingExplanation() {
   const blueprintMap: Record<string, any> = {
     'bpbyukgulyee - standard.png': require('../assets/acpic/bpbyukgulyee - standard.png'),
     'bpbyukgulyee - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
-    'bpbyukgulyee - premium': require('../assets/acpic/bpbyukgulyee - premium.png'),
+    'bpbyukgulyee - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
     'bpbyukgulyee.png': require('../assets/acpic/bpbyukgulyee.png'),
     'bpstandairconditioner.png': require('../assets/acpic/bpstandairconditioner.png'),
     'bpstandairconditioner - standard.png': require('../assets/acpic/bpstandairconditioner - standard.png'),
@@ -167,7 +156,7 @@ export default function BookingExplanation() {
     'bpstandairconditioner - premium.png': require('../assets/acpic/bpstandairconditioner - premium.png'),
     'bp2in1.png': require('../assets/acpic/bp2in1.png'),
     'bp2in1 - standard.png': require('../assets/acpic/bp2in1 - standard.png'),
-    'bp2in1 - deluxe & premium': require('../assets/acpic/bp2in1 - deluxe & premium.png'),
+    'bp2in1 - deluxe & premium.png': require('../assets/acpic/bp2in1 - deluxe & premium.png'),
     '1way.png': require('../assets/acpic/1way.png'),
     'bp1way - standard.png': require('../assets/acpic/bp1way - standard.png'),
     'bp1way - deluxe.png': require('../assets/acpic/bp1way - deluxe.png'),
@@ -185,7 +174,7 @@ export default function BookingExplanation() {
     'bpchungangonehyung - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
     'bpchungangonehyung - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
     'bpshilwaegi - standard & deluxe.png': require('../assets/acpic/bpshilwaegi - standard & deluxe.png'),
-    'bpshilwaegi - 2dan': require('../assets/acpic/bpshilwaegi - 2dan.png'),
+    'bpshilwaegi - 2dan.png': require('../assets/acpic/bpshilwaegi - 2dan.png'),
   };
 
   /* ---------- UI (identical to your file) ---------- */
@@ -261,7 +250,7 @@ export default function BookingExplanation() {
                     styles.partButton,
                     active && styles.partActive,
                   ]}
-                  onPress={() => setSelectedPartId(part.partId)}
+                  onPress={() => setSelectedPartId(part.partId ?? null)}
                 >
                   <Text
                     style={[

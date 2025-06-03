@@ -126,7 +126,7 @@ export default function SettingsScreen() {
     return d.length === 11 ? `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}` : p;
   };
 
-  const handleUnlinkKakao = () => {
+  const handleUnlinkAndDeleteKakao = () => {
   Alert.alert('카카오 연동 해제', '정말로 카카오 연동을 해제하시겠습니까?', [
     { text: '취소', style: 'cancel' },
     {
@@ -138,10 +138,9 @@ export default function SettingsScreen() {
           await KakaoLogins.unlink();            // <-- import * as KakaoLogins …
 
           // 2.  server-side unlink & user cleanup
-          await axios.post(
-            'https://smart-homecare-backend.onrender.com/api/kakao-unlink',
-            {},
-            { headers: { Authorization: `Bearer ${token}` } },
+         await axios.delete(
+          'https://smart-homecare-backend.onrender.com/api/kakao/delete',
+          { headers: { Authorization: `Bearer ${token}` } }
           );
 
           Alert.alert('완료', '카카오 연동이 해제되었습니다.', [
@@ -271,7 +270,7 @@ export default function SettingsScreen() {
             label={userInfo.provider === 'kakao' ? '카카오 연동 해제' : '회원 탈퇴'}
             actionLabel={userInfo.provider === 'kakao' ? '연동 해제' : '삭제'}
             actionColor="#d32f2f"
-            onPress={userInfo.provider === 'kakao'? handleUnlinkKakao: handleDeleteAccount}
+            onPress={userInfo.provider === 'kakao'? handleUnlinkAndDeleteKakao: handleDeleteAccount}
           />
         </View>
 

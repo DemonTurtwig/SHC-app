@@ -10,7 +10,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { RootStackParamList } from '../navigation/AppNavigator';   // adjust path if needed
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 /* ---------- small helper types ---------- */
 interface ServiceType { _id: string; name: string; label: string }

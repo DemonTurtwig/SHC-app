@@ -20,25 +20,61 @@ import AdminBookingList from '../screens/admin/AdminBookingList';
 import AdminSettings from '../screens/admin/AdminSettings';
 import AddressSearchScreen from '../screens/AddressSearchScreen';
 
-export interface TierAssetPart { partId: string; label: string; url: string }
-export interface TierAsset      { blueprint?: string; parts?: TierAssetPart[] }
-export interface Tier           { tier: string; price: number; assets: TierAsset }
-export interface Choice         { label: string; value: string; extraCost: number; extraTime: number }
-export interface Option         { _id: string; key: string; label: string; choices: Choice[] }
+export interface AssetPart {
+  partId?: string;
+  label?: string;
+  url: string;
+}
+
+export interface Tier {
+  tier: string;
+  price: number;
+  extraTime?: number;
+  assets: {
+    blueprint?: string | null;
+    parts: {
+      partId?: string;
+      label?: string;
+      url: string;
+    }[];
+  };
+}
+
+/** Extra add-ons a customer can pick */
+export interface Choice {
+  label: string;
+  value: string;
+  extraCost: number;
+  extraTime: number;
+}
+export interface Option {
+  _id: string;
+  key: string; 
+  label: string;
+  choices: Choice[];
+}
 
 export interface ServiceType {
   _id: string;
+  name: string;
   label: string;
   tiers: Tier[];
   options: Option[];
 }
-export interface Subtype { _id: string; name: string }
+
+export interface Subtype {
+  _id: string;
+  name: string;
+  iconUrl?: string;
+  category: {_id: string; name: string;} | string;
+  serviceOptions: ServiceType[];
+}
 
 export interface SelectedOption {
   _id: string;
   key: string;
-  selectedLabel: string;
   label: string;
+  selectedLabel: string;
   selectedValue: string;
   extraCost: number;
   extraTime: number;
@@ -55,7 +91,7 @@ export type RootStackParamList = {
   BookingMenu: { isGuest?: boolean };
   BookingExplanation: { subtype: Subtype; serviceType: ServiceType };
   BookingServiceSelection: { category: string } | undefined;
-  BookingSubtypeSelection: { selectedServiceType: string };
+  BookingSubtypeSelection: { category?: string; selectedServiceType: string};
   AddressSearchScreen: { onSelect: (addr: string) => void } | undefined;
   AdminDashboard: undefined;
   AdminUsers: undefined;
