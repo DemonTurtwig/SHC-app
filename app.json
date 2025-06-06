@@ -14,7 +14,7 @@
       "backgroundColor": "#d0eaff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "package": "com.shc.smarthomecareapp",
@@ -36,7 +36,15 @@
             "targetSdkVersion": 35,
             "minSdkVersion": 24,
             "useAndroidX": true,
-            "enableJetifier": true
+            "enableJetifier": true,
+            "manifest": {
+              "usesFeatures": [
+                {
+                  "name": "android.hardware.telephony",
+                  "required": true
+                }
+              ]
+            }
           },
           "gradleProperties": {
             "kotlinVersion": "2.0.21",
