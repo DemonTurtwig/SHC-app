@@ -45,27 +45,7 @@
             "targetSdkVersion": 35,
             "minSdkVersion": 24,
             "useAndroidX": true,
-            "enableJetifier": true,
-            "manifest": {
-              "usesFeatures": [
-                {
-                  "name": "android.hardware.telephony",
-                  "required": true
-                },
-                {
-                  "name": "android.hardware.type.watch",
-                  "required": false
-                },
-                {
-                  "name": "android.hardware.camera",
-                  "required": false
-                },
-                {
-                  "name": "android.hardware.camera.autofocus",
-                  "required": false
-                }
-              ]
-            }
+            "enableJetifier": true
           },
           "gradleProperties": {
             "kotlinVersion": "2.0.21",
@@ -74,6 +54,7 @@
           }
         }
       ],
+      "./plugins/setRequirementsAndroid.js",
       "./plugins/fix-kotlin-version",
       [
         "@react-native-seoul/kakao-login",
@@ -97,3 +78,4 @@
     }
   }
 }
+
