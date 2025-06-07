@@ -3,7 +3,7 @@
     "name": "smart-homecare-app",
     "slug": "smart-homecare-app",
     "scheme": "smarthomecareapplication",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "orientation": "portrait",
     "icon": "./asset/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.shc.smarthomecareapp",
-      "buildNumber": "1.0.11",
+      "buildNumber": "1.0.12",
       "infoPlist": {
         "NSCameraUsageDescription": "이 앱은 예약을 위한 프로필 사진 기능에 카메라 접근 권한이 필요합니다.",
         "NSLocationWhenInUseUsageDescription": "주소 확인 시 위치 기반 기능이 필요할 수 있습니다.",
