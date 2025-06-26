@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useAuth } from '../context/AuthContext';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { Platform } from 'react-native';
 
 const introLogo = require('../assets/icons/intro-logo.png');
 const kakaoIcon  = require('../assets/icons/kakao-icon.png');
@@ -109,10 +110,12 @@ const handleKakaoNativeLogin = async () => {
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoNativeLogin}>
-        <Image source={kakaoIcon} style={styles.kakaoIcon} />
-        <Text style={styles.kakaoText}>카카오로 로그인</Text>
-      </TouchableOpacity>
+           {Platform.OS === 'android' && (
+        <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoNativeLogin}>
+          <Image source={kakaoIcon} style={styles.kakaoIcon} />
+          <Text style={styles.kakaoText}>카카오로 로그인</Text>
+        </TouchableOpacity>
+      )}
 
       <Text style={styles.or}>또는</Text>
 
