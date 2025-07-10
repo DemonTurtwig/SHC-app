@@ -19,6 +19,7 @@ import AdminUsers from '../screens/admin/AdminUsers';
 import AdminBookingList from '../screens/admin/AdminBookingList';
 import AdminSettings from '../screens/admin/AdminSettings';
 import AddressSearchScreen from '../screens/AddressSearchScreen';
+import BookingDetail from '../screens/BookingDetailScreen';
 
 export interface AssetPart {
   partId?: string;
@@ -29,7 +30,7 @@ export interface AssetPart {
 export interface Tier {
   tier: string;
   price: number;
-  extraTime?: number;
+  memo: string;
   assets: {
     blueprint?: string | null;
     parts: {
@@ -45,7 +46,6 @@ export interface Choice {
   label: string;
   value: string;
   extraCost: number;
-  extraTime: number;
 }
 export interface Option {
   _id: string;
@@ -77,7 +77,14 @@ export interface SelectedOption {
   selectedLabel: string;
   selectedValue: string;
   extraCost: number;
-  extraTime: number;
+}
+
+export interface BookingPayload {
+  serviceType: ServiceType;
+  subtype: Subtype;
+  tier: Tier;
+  selectedOptions: SelectedOption[];
+  symptom?: string;
 }
 
 // Explicitly type the RootStackParamList
@@ -97,6 +104,7 @@ export type RootStackParamList = {
   AdminUsers: undefined;
   AdminBookings: undefined;
   AdminSettings: undefined;
+  BookingDetail: { bookingId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -144,6 +152,7 @@ const AppNavigator = () => {
       <Stack.Screen key="AdminBookings" name="AdminBookings" component={AdminBookingList} />,
       <Stack.Screen key="AdminSettings" name="AdminSettings" component={AdminSettings} />,
       <Stack.Screen key="AddressSearchScreen" name="AddressSearchScreen" component={AddressSearchScreen} />,
+      <Stack.Screen key="BookingDetail" name="BookingDetail" component={BookingDetail} />
     ];
   } else {
     screens = [
@@ -158,6 +167,7 @@ const AppNavigator = () => {
       <Stack.Screen key="BookingServiceSelection" name="BookingServiceSelection" component={BookingServiceSelection} />,
       <Stack.Screen key="BookingSubtypeSelection" name="BookingSubtypeSelection" component={BookingSubtypeSelection} />,
       <Stack.Screen key="AddressSearchScreen" name="AddressSearchScreen" component={AddressSearchScreen} />,
+      <Stack.Screen key="BookingDetail" name="BookingDetail" component={BookingDetail} />
     ];
   }
 

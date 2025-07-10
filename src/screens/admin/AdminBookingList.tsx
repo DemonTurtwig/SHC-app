@@ -1,4 +1,3 @@
-// screens/admin/AdminBookingList.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -9,6 +8,7 @@ import {
   Image,
   Alert,
   Modal,
+  TextInput,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
@@ -31,7 +31,6 @@ interface Booking {
   userPhone?: string;
 }
 
-
 const statusOptions: Booking['status'][] = ['대기', '확정', '완료', '취소'];
 
 /* ---------- status colours ---------- */
@@ -44,7 +43,7 @@ const statusColor: Record<Booking['status'], string> = {
 const StatusPill = ({ status }: { status: Booking['status'] }) => {
   const color = statusColor[status];
   return (
-    <View style={[styles.pill, { backgroundColor: `${color}22` }]}>
+    <View style={[styles.pill, { backgroundColor: `${color}22` }]}> 
       <Text style={[styles.pillText, { color }]}>{status}</Text>
     </View>
   );
@@ -55,22 +54,20 @@ export default function AdminBookingList() {
   const { token } = useAuth();
   const navigation = useNavigation<any>();
 
-  /* date range: default = 1 month */
-  const today       = new Date();
+  const today = new Date();
   const oneMonthAgo = new Date();
   oneMonthAgo.setDate(today.getDate() - 30);
 
   const [startDate, setStartDate] = useState<Date>(oneMonthAgo);
-  const [endDate,   setEndDate]   = useState<Date>(today);
+  const [endDate, setEndDate] = useState<Date>(today);
   const [showStart, setShowStart] = useState(false);
-  const [showEnd,   setShowEnd]   = useState(false);
+  const [showEnd, setShowEnd] = useState(false);
 
-  /* bookings */
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading,  setLoading]  = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  /* edit modal */
-  const [editing,  setEditing]  = useState<Booking | null>(null);
+  const [editing, setEditing] = useState<Booking | null>(null);
+  const [price, setPrice] = useState('');
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -78,7 +75,7 @@ export default function AdminBookingList() {
       const res = await axios.post(
         'https://smart-homecare-backend.onrender.com/api/admin/bookings/filter',
         {
-          start: dayjs(startDate).format('YYYY-MM-DD'),  
+          start: dayjs(startDate).format('YYYY-MM-DD'),
           end: dayjs(endDate).format('YYYY-MM-DD'),
         },
         { headers: { Authorization: `Bearer ${token}` } },
@@ -91,15 +88,18 @@ export default function AdminBookingList() {
       setLoading(false);
     }
   };
-  useEffect(() => { fetchBookings(); }, []);   // first load
+  useEffect(() => { fetchBookings(); }, []);
 
-  /* save status */
   const saveStatus = async (newStatus: Booking['status']) => {
     if (!editing) return;
     try {
+      const payload: any = { status: newStatus };
+      const parsedPrice = parseInt(price, 10);
+      if (!isNaN(parsedPrice)) payload.totalPrice = parsedPrice;
+
       await axios.patch(
         `https://smart-homecare-backend.onrender.com/api/admin/bookings/${editing._id}/status`,
-        { status: newStatus },
+        payload,
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setEditing(null);
@@ -109,7 +109,7 @@ export default function AdminBookingList() {
       Alert.alert('오류', '상태 변경에 실패했습니다.');
     }
   };
-  
+
   const deleteBooking = async (id: string) => {
     Alert.alert('삭제 확인', '정말로 이 예약을 삭제하시겠습니까?', [
       { text: '취소', style: 'cancel' },
@@ -121,7 +121,7 @@ export default function AdminBookingList() {
               `https://smart-homecare-backend.onrender.com/api/admin/bookings/${id}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            fetchBookings(); // refresh list
+            fetchBookings();
           } catch (err) {
             console.error('deleteBooking error', err);
             Alert.alert('오류', '예약 삭제에 실패했습니다.');
@@ -130,22 +130,17 @@ export default function AdminBookingList() {
       },
     ]);
   };
-  
 
-  /* ---------- UI ---------- */
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <View style={styles.container}>
         <Text style={styles.title}>예약 관리</Text>
-
-        {/* date filter row */}
         <View style={styles.filterRow}>
           <TouchableOpacity style={styles.dateButton} onPress={() => setShowStart(true)}>
             <Text style={styles.dateText}>
               시작일: {dayjs(startDate).format('YYYY. M. D.')}
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.dateButton} onPress={() => setShowEnd(true)}>
             <Text style={styles.dateText}>
               종료일: {dayjs(endDate).format('YYYY. M. D.')}
@@ -158,19 +153,12 @@ export default function AdminBookingList() {
         </TouchableOpacity>
 
         {showStart && (
-          <DateTimePicker
-            value={startDate}
-            onChange={(_, d) => { setShowStart(false); d && setStartDate(d); }}
-          />
+          <DateTimePicker value={startDate} onChange={(_, d) => { setShowStart(false); d && setStartDate(d); }} />
         )}
         {showEnd && (
-          <DateTimePicker
-            value={endDate}
-            onChange={(_, d) => { setShowEnd(false); d && setEndDate(d); }}
-          />
+          <DateTimePicker value={endDate} onChange={(_, d) => { setShowEnd(false); d && setEndDate(d); }} />
         )}
 
-        {/* list */}
         <FlatList
           refreshing={loading}
           onRefresh={fetchBookings}
@@ -178,106 +166,79 @@ export default function AdminBookingList() {
           contentContainerStyle={{ paddingBottom: 100 }}
           keyExtractor={b => b._id}
           renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>{item.name ?? '게스트'}</Text>
+           <TouchableOpacity onPress={() => navigation.navigate('BookingDetail', { bookingId: item._id })}>
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>{item.name ?? '게스트'}</Text>
+    <View style={styles.cardRow}>
+      <Text style={styles.cardPrice}>
+        {item.totalPrice === -1 ? '가격문의' : `₩${item.totalPrice.toLocaleString()}`}
+      </Text>
+      <StatusPill status={item.status} />
+    </View>
+    <TouchableOpacity
+      onPress={async () => {
+        await Clipboard.setStringAsync(item.userAddress ?? '');
+        Toast.show({ type: 'success', text1: '주소 복사됨', text2: item.userAddress, position: 'bottom' });
+      }}
+    >
+      <Text style={[styles.cardSubtitle, { textDecorationLine: 'underline' }]}>주소: {item.userAddress}</Text>
+    </TouchableOpacity>
 
-              <View style={styles.cardRow}>
-                <Text style={styles.cardPrice}>₩{item.totalPrice.toLocaleString()}</Text>
-                <StatusPill status={item.status} />
-              </View>
+    <View style={{ position: 'absolute', right: 14, top: 10, flexDirection: 'row', gap: 8 }}>
+      <TouchableOpacity onPress={() => { setEditing(item); setPrice(item.totalPrice.toString()); }}>
+        <Image source={require('../../assets/icons/edit.png')} style={styles.editIcon} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => deleteBooking(item._id)}>
+        <Image source={require('../../assets/icons/delete-booking.png')} style={[styles.editIcon, { tintColor: '#d32f2f' }]} />
+      </TouchableOpacity>
+        </View>
+      </View>
+  </TouchableOpacity>
 
-               <TouchableOpacity
-                onPress={async () => {
-                await Clipboard.setStringAsync(item.userAddress ?? '');
-                Toast.show({
-                  type: 'success',
-                  text1: '주소 복사됨',
-                  text2: item.userAddress,
-                  position: 'bottom',
-                });
-              }}
-            >
-               <Text style={[styles.cardSubtitle, { textDecorationLine: 'underline' }]}>
-                  주소: {item.userAddress}
-                </Text>
-              </TouchableOpacity>
-
-
-              <Text style={styles.cardSubtitle}>
-                {dayjs(item.reservationDate).format('YYYY. M. D.')} {item.reservationTime}
-              </Text>
-
-              
-
-              <View style={{ position: 'absolute', right: 14, top: 10, flexDirection: 'row', gap: 8 }}>
-                <TouchableOpacity onPress={() => setEditing(item)}>
-                  <Image
-                    source={require('../../assets/icons/edit.png')}
-                    style={styles.editIcon}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => deleteBooking(item._id)}>
-                  <Image
-                    source={require('../../assets/icons/delete-booking.png')}
-                    style={[styles.editIcon, { tintColor: '#d32f2f' }]}
-                  />
-                </TouchableOpacity>
-              </View>
-
-            </View>
           )}
         />
       </View>
 
+      {/* Footer */}
       <View style={styles.footer}>
-  <TouchableOpacity
-    style={styles.footerItem}
-    onPress={() => navigation.navigate('AdminDashboard')}
-  >
-    <Image source={require('../../assets/icons/home.png')} style={styles.footerIcon} />
-    <Text style={styles.footerText}>홈</Text>
-  </TouchableOpacity>
+        <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('AdminDashboard')}>
+          <Image source={require('../../assets/icons/home.png')} style={styles.footerIcon} />
+          <Text style={styles.footerText}>홈</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('AdminUsers')}>
+          <Image source={require('../../assets/icons/user.png')} style={styles.footerIcon} />
+          <Text style={styles.footerText}>유저</Text>
+        </TouchableOpacity>
+        <View style={[styles.footerItem, styles.activeTab]}>
+          <Image source={require('../../assets/icons/view-order.png')} style={[styles.footerIcon, styles.activeIcon]} />
+          <Text style={[styles.footerText, styles.activeText]}>예약</Text>
+        </View>
+        <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('AdminSettings')}>
+          <Image source={require('../../assets/icons/settings.png')} style={styles.footerIcon} />
+          <Text style={styles.footerText}>설정</Text>
+        </TouchableOpacity>
+      </View>
 
-  <TouchableOpacity
-    style={styles.footerItem}
-    onPress={() => navigation.navigate('AdminUsers')}
-  >
-    <Image source={require('../../assets/icons/user.png')} style={styles.footerIcon} />
-    <Text style={styles.footerText}>유저</Text>
-  </TouchableOpacity>
-
-  <View style={[styles.footerItem, styles.activeTab]}>
-    <Image
-      source={require('../../assets/icons/view-order.png')}
-      style={[styles.footerIcon, styles.activeIcon]}
-    />
-    <Text style={[styles.footerText, styles.activeText]}>예약</Text>
-  </View>
-
-  <TouchableOpacity
-    style={styles.footerItem}
-    onPress={() => navigation.navigate('AdminSettings')}
-  >
-    <Image source={require('../../assets/icons/settings.png')} style={styles.footerIcon} />
-    <Text style={styles.footerText}>설정</Text>
-  </TouchableOpacity>
-</View>
-
-      {/* edit modal */}
+      {/* Modal */}
       <Modal transparent visible={!!editing} animationType="fade">
         <View style={styles.modalWrap}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>상태 변경</Text>
+            <Text style={styles.modalTitle}>상태 / 가격 변경</Text>
             {statusOptions.map(st => (
-              <TouchableOpacity
-                key={st}
-                style={[styles.statusBtn, { backgroundColor: `${statusColor[st]}22` }]}
-                onPress={() => saveStatus(st)}
-              >
+              <TouchableOpacity key={st} style={[styles.statusBtn, { backgroundColor: `${statusColor[st]}22` }]} onPress={() => saveStatus(st)}>
                 <Text style={[styles.statusBtnTxt, { color: statusColor[st] }]}>{st}</Text>
               </TouchableOpacity>
             ))}
-
+            <View style={styles.priceInputRow}>
+              <Text style={styles.cardSubtitle}>총액 (₩)</Text>
+              <TextInput
+                value={price}
+                onChangeText={setPrice}
+                placeholder="총 가격 입력"
+                keyboardType="numeric"
+                style={styles.priceInput}
+              />
+            </View>
             <TouchableOpacity style={styles.cancelBtn} onPress={() => setEditing(null)}>
               <Text style={styles.cancelTxt}>취소</Text>
             </TouchableOpacity>
@@ -352,4 +313,10 @@ const styles = StyleSheet.create({
   statusBtnTxt: { fontFamily: 'Pretendard-Bold', fontSize: 15 },
   cancelBtn: { alignItems: 'center', marginTop: 4 },
   cancelTxt: { fontFamily: 'Pretendard-Regular', fontSize: 14, color: '#007BFF' },
+  priceInputRow: { marginTop: 12, marginBottom: 6 },
+  priceInput: {
+    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+    paddingVertical: 8, paddingHorizontal: 10,
+    fontFamily: 'Pretendard-Regular', fontSize: 14,
+  },
 });

@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "name": "clean",
+  "label": "세척"
+},
+{
+  "_id": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "name": "install",
+  "label": "설치"
+},
+{
+  "_id": {
+    "$oid": "680885c2de9a24d4ea636566"
+  },
+  "name": "sell",
+  "label": "판매"
+},
+{
+  "_id": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "name": "fix",
+  "label": "A/S"
+}]

@@ -1,0 +1,672 @@
+[{
+  "_id": {
+    "$oid": "6808ada83701f4277ff85067"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 80000
+},
+{
+  "_id": {
+    "$oid": "6808ada83701f4277ff85068"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "extraTime": 0,
+  "price": 100000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85069"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 120000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506a"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 90000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506b"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "extraTime": 0,
+  "price": 110000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506c"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 130000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506d"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 95000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506e"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "extraTime": 0,
+  "price": 115000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff8506f"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "premium",
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "extraTime": 0,
+  "price": 135000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85070"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 100000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85071"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "extraTime": 0,
+  "price": 120000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85072"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 140000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85073"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "standard",
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "extraTime": 0,
+  "price": 105000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85074"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "extraTime": 0,
+  "price": 125000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85075"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 145000
+},
+{
+  "_id": {
+    "$oid": "6808ada93701f4277ff85076"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "standard",
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "extraTime": 0,
+  "price": 110000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff85077"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "tier": "deluxe",
+  "extraTime": 0,
+  "price": 130000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff85078"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 150000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff85079"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 115000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff8507a"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "extraTime": 0,
+  "price": 135000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff8507b"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 155000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff8507c"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "standard",
+  "extraTime": 0,
+  "price": 70000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff8507d"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "deluxe",
+  "extraTime": 0,
+  "price": 90000
+},
+{
+  "_id": {
+    "$oid": "6808adaa3701f4277ff8507e"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636564"
+  },
+  "tier": "premium",
+  "extraTime": 0,
+  "price": 120000
+},
+{
+  "_id": {
+    "$oid": "6808b7993701f4277ff850a6"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b7993701f4277ff850a7"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850a8"
+  },
+  "subtype": {
+    "$oid": "6802079fbaf9707f1bb5f8a4"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850a9"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850aa"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850ab"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850ac"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850ad"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850ae"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a6"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850af"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b0"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b1"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "subtype": {
+    "$oid": "68020828baf9707f1bb5f8a7"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b2"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b3"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b4"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a8"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b5"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b6"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b7"
+  },
+  "subtype": {
+    "$oid": "68020829baf9707f1bb5f8a9"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b8"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850b9"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79a3701f4277ff850ba"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8aa"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79b3701f4277ff850bb"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636565"
+  },
+  "extraTime": 0,
+  "price": 180000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79b3701f4277ff850bc"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636567"
+  },
+  "extraTime": 0,
+  "price": 100000,
+  "tier": "standard-others"
+},
+{
+  "_id": {
+    "$oid": "6808b79b3701f4277ff850bd"
+  },
+  "serviceType": {
+    "$oid": "680885c2de9a24d4ea636563"
+  },
+  "subtype": {
+    "$oid": "6802082abaf9707f1bb5f8ab"
+  },
+  "extraTime": 0,
+  "price": 70000,
+  "tier": "standard-others"
+}]

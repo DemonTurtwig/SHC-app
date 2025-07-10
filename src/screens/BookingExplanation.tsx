@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   BackHandler,
+  TextInput,
 } from 'react-native';
 import {
   useRoute,
@@ -20,52 +21,47 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList, ServiceType, Subtype } from '../navigation/AppNavigator';
 
-export interface Choice         { label: string; value: string; extraCost: number; extraTime: number }
-export interface Option         { _id: string; key: string; label: string; choices: Choice[] }
+export interface Choice {
+  label: string;
+  value: string;
+  extraCost: number;
+}
+
+export interface Option {
+  _id: string;
+  key: string;
+  label: string;
+  choices: Choice[];
+}
 
 /* --------- stack generics --------- */
 type ExpRoute = RouteProp<RootStackParamList, 'BookingExplanation'>;
-type ExpNav   = NativeStackNavigationProp<RootStackParamList>;
+type ExpNav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BookingExplanation() {
-  /* route + nav */
   const route = useRoute<ExpRoute>();
   const navigation = useNavigation<ExpNav>();
+  const { serviceType = {} as ServiceType, subtype = {} as Subtype } = route.params ?? {};
 
-  const {
-    serviceType = {} as ServiceType,
-    subtype = {} as Subtype,
-  } = route.params ?? {};
-
-  /* ---------------- tier & part state ---------------- */
   const [selectedTierKey, setSelectedTierKey] = useState<string>(
-    serviceType.tiers?.[0]?.tier ?? '',
+    serviceType.tiers?.[0]?.tier ?? ''
   );
-
-  /** currently selected tier object (memo for perf / consistency) */
   const currentTier = useMemo(
-    () =>
-      serviceType.tiers?.find(t => t.tier === selectedTierKey) ??
-      null,
-    [serviceType.tiers, selectedTierKey],
+    () => serviceType.tiers?.find(t => t.tier === selectedTierKey) ?? null,
+    [serviceType.tiers, selectedTierKey]
   );
-
   const [selectedPartId, setSelectedPartId] = useState<string | null | undefined>(null);
 
-  /* whenever tier changes → reset selectedPartId to first part */
   useEffect(() => {
     const firstPartId = currentTier?.assets.parts?.[0]?.partId ?? null;
     setSelectedPartId(firstPartId);
   }, [currentTier]);
 
   const selectedPart = useMemo(
-    () =>
-      currentTier?.assets.parts?.find(p => p.partId === selectedPartId) ??
-      null,
-    [currentTier, selectedPartId],
+    () => currentTier?.assets.parts?.find(p => p.partId === selectedPartId) ?? null,
+    [currentTier, selectedPartId]
   );
 
-  /* ---------------- option selection ---------------- */
   interface SelectedOption {
     _id: string;
     key: string;
@@ -73,18 +69,18 @@ export default function BookingExplanation() {
     selectedLabel: string;
     selectedValue: string;
     extraCost: number;
-    extraTime: number;
   }
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, SelectedOption>
-  >({});
-  const subKey = (subtype as any).name ?? ''; 
-  /* ---------------- block physical back ---------------- */
+
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, SelectedOption>>({});
+  const [symptom, setSymptom] = useState('');
+
+  const subKey = (subtype as any).name ?? '';
+
   useFocusEffect(
     useCallback(() => {
       const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
       return () => sub.remove();
-    }, []),
+    }, [])
   );
 
   const handleBack = () => {
@@ -102,7 +98,6 @@ export default function BookingExplanation() {
     ]);
   };
 
-  /* ---------------- confirm ---------------- */
   const handleConfirm = () => {
     if (!currentTier) {
       Alert.alert('오류', '티어를 선택해 주세요.');
@@ -124,149 +119,90 @@ export default function BookingExplanation() {
           selectedLabel: opt.choices[0].label,
           selectedValue: opt.choices[0].value,
           extraCost: opt.choices[0].extraCost,
-          extraTime: opt.choices[0].extraTime,
         }
       );
     });
 
-    /* route */
     navigation.navigate('Confirm', {
       serviceType,
       subtype,
-      tier: {
-        ...currentTier,
-        tier:
-          currentTier.tier === 'standard-others'
-            ? 'standard'
-            : currentTier.tier,
-      },
+      tier: currentTier,
       selectedOptions: optionPayload,
+      ...(serviceType.name === 'fix' && { symptom }),
     });
   };
 
-  /* ---------- blueprint images map (unchanged) ---------- */
   const blueprintMap: Record<string, any> = {
     'bpbyukgulyee - standard.png': require('../assets/acpic/bpbyukgulyee - standard.png'),
     'bpbyukgulyee - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
     'bpbyukgulyee - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
-    'bpbyukgulyee.png': require('../assets/acpic/bpbyukgulyee.png'),
     'bpstandairconditioner.png': require('../assets/acpic/bpstandairconditioner.png'),
     'bpstandairconditioner - standard.png': require('../assets/acpic/bpstandairconditioner - standard.png'),
     'bpstandairconditioner - deluxe.png': require('../assets/acpic/bpstandairconditioner - deluxe.png'),
     'bpstandairconditioner - premium.png': require('../assets/acpic/bpstandairconditioner - premium.png'),
-    'bp2in1.png': require('../assets/acpic/bp2in1.png'),
     'bp2in1 - standard.png': require('../assets/acpic/bp2in1 - standard.png'),
     'bp2in1 - deluxe & premium.png': require('../assets/acpic/bp2in1 - deluxe & premium.png'),
-    '1way.png': require('../assets/acpic/1way.png'),
     'bp1way - standard.png': require('../assets/acpic/bp1way - standard.png'),
     'bp1way - deluxe.png': require('../assets/acpic/bp1way - deluxe.png'),
     'bp1way - premium.png': require('../assets/acpic/bp1way - premium.png'),
-    '2way.png': require('../assets/acpic/2way.png'),
-    '2way - standard.png': require('../assets/acpic/2way - standard.png'),
-    '2way - deluxe.png': require('../assets/acpic/2way - deluxe.png'),
-    '2way - premium.png': require('../assets/acpic/2way - premium.png'),
-    '4way.png': require('../assets/acpic/4way.png'),
     '4way - standard.png': require('../assets/acpic/4way - standard.png'),
     '4way - deluxe.png': require('../assets/acpic/4way - deluxe.png'),
     '4way - premium.png': require('../assets/acpic/4way - premium.png'),
-    'bpchungangonehyung.png': require('../assets/acpic/bpchungangonehyung.png'),
-    'bpchungangonehyung - standard.png': require('../assets/acpic/bpchungangonehyung - standard.png'),
-    'bpchungangonehyung - deluxe.png': require('../assets/acpic/bpbyukgulyee - deluxe.png'),
-    'bpchungangonehyung - premium.png': require('../assets/acpic/bpbyukgulyee - premium.png'),
     'bpshilwaegi - standard & deluxe.png': require('../assets/acpic/bpshilwaegi - standard & deluxe.png'),
     'bpshilwaegi - 2dan.png': require('../assets/acpic/bpshilwaegi - 2dan.png'),
   };
 
   const blueprintKey = useMemo(() => {
-  if (!currentTier) return null;
+    if (!currentTier) return null;
+    return currentTier.assets?.blueprint ?? null;
+  }, [currentTier]);
 
-  // 1️⃣ If the tier already carries its own blueprint and we have it locally → use it.
-  if (
-    currentTier.assets?.blueprint &&
-    blueprintMap[currentTier.assets.blueprint]
-  ) {
-    return currentTier.assets.blueprint;
-  }
-
-  // 2️⃣ When the tier is “standard-others”, fall back to a generic picture that
-  if (currentTier.tier === 'standard-others') {
-  const genericBySubtype: Record<string, string> = {
-    byukgulyee:              'bpbyukgulyee.png',
-    standairconditioner:     'bpstandairconditioner.png',
-    '2in1':                  'bp2in1.png',
-    '1wayairconditioner':    '1way.png',
-    '2wayairconditioner':    '2way.png',
-    '4wayairconditioner':    '4way.png',
-    chungangonehyungairconditioner: 'bpchungangonehyung.png',
-  };
-
-  /* 👉 here */
-  return genericBySubtype[subKey] ?? null;
-}
-
-
-  // 3️⃣ Anything else → no picture.
-  return null;
-}, [currentTier, subtype]);
-
-  /* ---------- UI (identical to your file) ---------- */
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* back */}
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Image
-            source={require('../assets/icons/back-button.png')}
-            style={styles.backIcon}
-          />
+          <Image source={require('../assets/icons/back-button.png')} style={styles.backIcon} />
         </TouchableOpacity>
 
         <Text style={styles.title}>{serviceType.label ?? '서비스'} 안내</Text>
         <Text style={styles.subTitle}>세부 옵션 및 세척 부위를 확인하세요</Text>
 
-        {/* tiers */}
+        {/* Tier selection */}
         <View style={styles.tierList}>
           {(serviceType.tiers ?? []).map(tier => {
             const active = selectedTierKey === tier.tier;
             return (
               <TouchableOpacity
                 key={tier.tier}
-                style={[
-                  styles.tierButton,
-                  active && styles.tierActive,
-                ]}
+                style={[styles.tierButton, active && styles.tierActive]}
                 onPress={() => setSelectedTierKey(tier.tier)}
               >
-                <Text
-                  style={[
-                    styles.tierLabel,
-                    active && styles.tierLabelSelected,
-                  ]}
-                >
-                  {(tier.tier === 'standard-others' ? 'STANDARD' : tier.tier).toUpperCase()}
+                <Text style={[styles.tierLabel, active && styles.tierLabelSelected]}>
+                  {tier.tier.toUpperCase()}
                 </Text>
-                <Text
-                  style={[
-                    styles.tierPrice,
-                    active && styles.tierPriceSelected,
-                  ]}
-                >
-                  ₩{tier.price.toLocaleString()}
+                <Text style={[styles.tierPrice, active && styles.tierPriceSelected]}>
+                  {tier.price === -1 ? '가격문의' : `₩${tier.price.toLocaleString()}`}
                 </Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        {/* blueprint */}
-        <Text style={styles.title}>설계도</Text>
-        <View style={styles.blueprintContainer}>
-          {blueprintKey && blueprintMap[blueprintKey] && (
-          <Image source={blueprintMap[blueprintKey]} style={styles.blueprint} />
-          )}
-        </View>
+        {currentTier?.memo ? (
+          <Text style={styles.tierMemo}>※ {currentTier.memo}</Text>
+        ) : null}
 
-        {/* part buttons */}
+        {/* Blueprint */}
+        {blueprintKey && blueprintMap[blueprintKey] && (
+          <>
+            <Text style={styles.title}>설계도</Text>
+            <View style={styles.blueprintContainer}>
+              <Image source={blueprintMap[blueprintKey]} style={styles.blueprint} />
+            </View>
+          </>
+        )}
+
+        {/* Part buttons */}
         {currentTier?.assets.parts?.length ? (
           <View style={styles.partList}>
             {currentTier.assets.parts.map(part => {
@@ -274,18 +210,10 @@ export default function BookingExplanation() {
               return (
                 <TouchableOpacity
                   key={part.partId}
-                  style={[
-                    styles.partButton,
-                    active && styles.partActive,
-                  ]}
+                  style={[styles.partButton, active && styles.partActive]}
                   onPress={() => setSelectedPartId(part.partId ?? null)}
                 >
-                  <Text
-                    style={[
-                      styles.partLabel,
-                      active && styles.partLabelActive,
-                    ]}
-                  >
+                  <Text style={[styles.partLabel, active && styles.partLabelActive]}>
                     {part.label}
                   </Text>
                 </TouchableOpacity>
@@ -294,17 +222,14 @@ export default function BookingExplanation() {
           </View>
         ) : null}
 
-        {/* preview */}
         {selectedPart && (
           <View style={styles.previewBox}>
             <Image source={{ uri: selectedPart.url }} style={styles.previewImage} />
-            <Text style={styles.previewText}>
-              실제 {selectedPart.label} 세척 모습입니다.
-            </Text>
+            <Text style={styles.previewText}>실제 {selectedPart.label} 세척 모습입니다.</Text>
           </View>
         )}
 
-        {/* options */}
+        {/* Options */}
         {serviceType.options?.length ? (
           <View style={styles.optionsBox}>
             <Text style={styles.subTitle}>선택 가능한 옵션</Text>
@@ -312,15 +237,11 @@ export default function BookingExplanation() {
               <View key={opt._id} style={styles.optionGroup}>
                 <Text style={styles.optionLabel}>{opt.label}</Text>
                 {opt.choices.map(choice => {
-                  const isSel =
-                    selectedOptions[opt.key]?.selectedValue === choice.value;
+                  const isSel = selectedOptions[opt.key]?.selectedValue === choice.value;
                   return (
                     <TouchableOpacity
                       key={choice.value}
-                      style={[
-                        styles.optionChoiceButton,
-                        isSel && styles.optionChoiceSelected,
-                      ]}
+                      style={[styles.optionChoiceButton, isSel && styles.optionChoiceSelected]}
                       onPress={() =>
                         setSelectedOptions(prev => ({
                           ...prev,
@@ -331,19 +252,12 @@ export default function BookingExplanation() {
                             selectedLabel: choice.label,
                             selectedValue: choice.value,
                             extraCost: choice.extraCost,
-                            extraTime: choice.extraTime,
                           },
                         }))
                       }
                     >
-                      <Text
-                        style={[
-                          styles.optionChoiceText,
-                          isSel && styles.optionChoiceTextSelected,
-                        ]}
-                      >
-                        ▸ {choice.label} (+₩{choice.extraCost}, +
-                        {choice.extraTime}분)
+                      <Text style={[styles.optionChoiceText, isSel && styles.optionChoiceTextSelected]}>
+                        ▸ {choice.label} (+₩{choice.extraCost.toLocaleString('ko-KR')})
                       </Text>
                     </TouchableOpacity>
                   );
@@ -351,7 +265,24 @@ export default function BookingExplanation() {
               </View>
             ))}
           </View>
+
         ) : null}
+
+        {/* Symptom for A/S only */}
+         {serviceType.name === 'fix' && (
+        <Text style={styles.title}>증상을 입력해주세요</Text>
+          )}
+        {serviceType.name === 'fix' && (
+          <View style={styles.symptomBox}>
+              <TextInput
+                style={styles.symptomInput}
+                multiline
+                placeholder="예: 냉방이 잘 안돼요, 물이 새요 등"
+                value={symptom}
+                onChangeText={setSymptom}
+              />
+              </View>
+          )}
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleConfirm}>
           <Text style={styles.submitTxt}>예약 진행하기</Text>
@@ -479,6 +410,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 14,
+    marginBottom: 20,
   },
   optionHeader: {
     fontFamily: 'Pretendard-Bold',
@@ -560,6 +492,45 @@ const styles = StyleSheet.create({
       color: '#fff', 
       fontSize: 16, 
       fontFamily: 'Pretendard-Bold'
-    }
+    },
+
+  symptomBox: {
+  width: '100%',
+  paddingTop: 0,
+  paddingHorizontal: 0,
+  paddingBottom: 0,
+  marginTop: 20,
+  marginBottom: 20,
+  backgroundColor: 'transparent',
+  },
+
+symptomInput: {
+  fontFamily: 'Pretendard-Regular',
+  fontSize: 14,
+  color: '#333',
+  padding: 16,
+  textAlignVertical: 'top',
+  minHeight: 120,
+  width: '100%',
+  borderRadius: 10,
+  borderColor: '#ccc',
+  borderWidth: 1,
+  backgroundColor: '#fff',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.06,
+  shadowRadius: 4,
+  elevation: 2,
+},
+
+tierMemo: {
+  fontFamily: 'Pretendard-Regular',
+  fontSize: 13,
+  color: '#cc0000',
+  textAlign: 'center',
+  marginTop: 6,
+  marginBottom: 16,
+  paddingHorizontal: 8,
+}
 
 });

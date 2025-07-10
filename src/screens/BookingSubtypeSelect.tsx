@@ -27,10 +27,8 @@ type SubtypeNav   = NativeStackNavigationProp<RootStackParamList>;
 
 const subtypeIcons: Record<string, any> = {
   벽걸이형: require('../assets/icons/byukgulyee-icon.png'),
-  천장형4way: require('../assets/icons/chungang4way-icon.png'),
-  천장형2way: require('../assets/icons/chungang2way-icon.png'),
-  천장형1way: require('../assets/icons/chungang1way-icon.png'),
-  천장형원형: require('../assets/icons/chunjangonehyung-icon.png'),
+  시스템에어컨: require('../assets/icons/chungang4way-icon.png'),
+  천장형: require('../assets/icons/chungang1way-icon.png'),
   실외기: require('../assets/icons/shiwaegi-icon.png'),
   스탠드형: require('../assets/icons/standairconditioner-icon.png'),
   '2in1형': require('../assets/icons/2in1-icon.png'),
@@ -51,9 +49,10 @@ export default function BookingSubtypeSelect() {
         const { data } = await axios.get('https://smart-homecare-backend.onrender.com/api/booking/initialize');
         if (!Array.isArray(data.subtypes)) throw new Error('subtypes는 array가 아닙니다.');
 
-        const filtered = data.subtypes.filter((s: Subtype) => {
-          return typeof s.category !== 'string' && s.category?.name === category;
-        });
+      const filtered = data.subtypes.filter((s: Subtype) => {
+  return s.serviceOptions?.some(opt => opt.name === selectedServiceType);
+});
+
 
         setSubtypes(filtered);
       } catch (err) {

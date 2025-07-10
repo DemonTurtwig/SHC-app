@@ -1,0 +1,141 @@
+[{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1770"
+  },
+  "name": "벽걸이형",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "byukgulyee-icon.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636564"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1771"
+  },
+  "name": "스탠드형",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "standairconditioner-icon.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636564"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1772"
+  },
+  "name": "2in1형",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "2in1-icon.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636564"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1773"
+  },
+  "name": "천장형",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "chunjang-combined.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636564"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1774"
+  },
+  "name": "시스템에어컨",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "systemaircon.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636564"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "686783ebfe52f458209f1775"
+  },
+  "name": "실외기",
+  "category": {
+    "$oid": "68020763baf9707f1bb5f8a3"
+  },
+  "iconUrl": "shiwaegi-icon.png",
+  "serviceOptions": [
+    {
+      "$oid": "680885c2de9a24d4ea636565"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636566"
+    },
+    {
+      "$oid": "680885c2de9a24d4ea636567"
+    }
+  ]
+}]

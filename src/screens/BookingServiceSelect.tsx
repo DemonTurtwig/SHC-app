@@ -19,13 +19,11 @@ type SelNav   = NativeStackNavigationProp<RootStackParamList>;
 
 /* ---------- local assets ---------- */
 const serviceTypeIcons: Record<string, any> = {
-  clean:   require('../assets/icons/aircon-cleaning.png'),
-  wash:    require('../assets/icons/aircon-washing.png'),
+  clean:    require('../assets/icons/aircon-washing.png'),
   install: require('../assets/icons/aircon-installation.png'),
   fix:     require('../assets/icons/aircon-repair.png'),
   sell:    require('../assets/icons/aircon-sell.png'),
 };
-
 export default function BookingServiceSelect() {
   const navigation = useNavigation<SelNav>();
   const route      = useRoute<SelRoute>();
@@ -61,7 +59,6 @@ export default function BookingServiceSelect() {
     }, [])
   );
 
-  /* ---------- UI (unchanged) ---------- */
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.wrapper}>
       <View style={styles.header}>

@@ -13,7 +13,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/AppNavigator';
 import Toast from 'react-native-root-toast';
 import dayjs from 'dayjs';
 
@@ -46,7 +47,9 @@ const BookingCard = ({ item }: { item: Booking }) => (
   <View style={styles.card}>
     <Text style={styles.cardTitle}>{item.serviceLabel}</Text>
     <View style={styles.cardRow}>
-      <Text style={styles.cardPrice}>₩{item.totalPrice.toLocaleString()}</Text>
+      <Text style={styles.cardPrice}>
+        {item.totalPrice === -1 ? '가격문의' : `₩${item.totalPrice.toLocaleString()}`}
+      </Text>
       <StatusPill status={item.status} />
     </View>
     <View style={styles.cardRow}>
@@ -60,7 +63,7 @@ const BookingCard = ({ item }: { item: Booking }) => (
 
 const HistoryScreen = () => {
   const { token } = useAuth();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [startDate, setStartDate] = useState(dayjs().subtract(30, 'day').toDate());
   const [endDate, setEndDate] = useState(new Date());
@@ -180,7 +183,11 @@ const HistoryScreen = () => {
               <Text style={styles.emptyText}>예약 내역이 없습니다.</Text>
             )
           }
-          renderItem={({ item }) => <BookingCard item={item} />}
+          renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate('BookingDetail', { bookingId: item._id })}>
+            <BookingCard item={item} />
+          </TouchableOpacity>
+          )}
           style={{ marginTop: 20 }}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
