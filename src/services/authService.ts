@@ -22,3 +22,12 @@ export const loginWithKakao = (
     .post(`${API}/kakao/login`, { accessToken, shippingAddr })
     .then(r => r.data); 
 };
+
+export const loginWithApple = async (identityToken: string, authorizationCode: string) => {
+  const res = await axios.post('https://smart-homecare-backend.onrender.com/api/auth/apple', {
+    identityToken,
+    authorizationCode,
+  });
+
+  return res.data;
+};

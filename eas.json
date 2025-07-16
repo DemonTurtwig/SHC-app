@@ -27,16 +27,5 @@
         "distribution": "store"
       }
     }
-  },
-
-  "submit": {
-    "production": {
-      "ios": {
-        "ascAppId":          "6746927113",
-        "ascApiKeyId":       "BPT88AMZWY",
-        "ascApiKeyIssuerId": "d4f09a17-5f14-44e7-abf6-5bad894b562d",
-        "ascApiKeyBundle":   "EAS_ASC_API_KEY_BASE64"
-      }
-    }
   }
 }

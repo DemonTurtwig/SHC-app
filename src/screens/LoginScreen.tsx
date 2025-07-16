@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ActivityIndicator,
   TextInput, Image, TouchableOpacity,
-  Alert,
+  Alert, ScrollView, Platform
 } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as KakaoLogins from '@react-native-seoul/kakao-login';
 import { useNavigation } from '@react-navigation/native';
@@ -11,7 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useAuth } from '../context/AuthContext';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Platform } from 'react-native';
+
 
 const introLogo = require('../assets/icons/intro-logo.png');
 const kakaoIcon  = require('../assets/icons/kakao-icon.png');
@@ -84,6 +85,10 @@ const handleKakaoNativeLogin = async () => {
     );
   }
 
+  function loginApple(arg0: { identityToken: string | null; authorizationCode: string | null; }) {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.container}>
       <Image source={introLogo} style={styles.logo} />
@@ -116,6 +121,34 @@ const handleKakaoNativeLogin = async () => {
           <Text style={styles.kakaoText}>카카오로 로그인</Text>
         </TouchableOpacity>
       )}
+
+            {Platform.OS === 'ios' || true ? (
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          cornerRadius={8}
+          style={{ width: '100%', height: 44, marginTop: 12 }}
+          onPress={async () => {
+            try {
+              const credential = await AppleAuthentication.signInAsync({
+                requestedScopes: [
+                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                  AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                ],
+              });
+
+              // Pass to backend
+              await loginApple({
+                identityToken: credential.identityToken,
+                authorizationCode: credential.authorizationCode,
+              });
+            } catch (e) {
+              console.error('Apple Login Failed:', e);
+              Alert.alert('Apple 로그인 실패');
+            }
+          }}
+        />
+      ) : null}
 
       <Text style={styles.or}>또는</Text>
 

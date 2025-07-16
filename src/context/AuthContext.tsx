@@ -3,21 +3,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 import axios from 'axios';
-import { loginWithEmail, loginWithKakao } from '../services/authService';
+import { loginWithEmail, loginWithKakao, loginWithApple } from '../services/authService';
 import * as KakaoLogins from '@react-native-seoul/kakao-login';
 
 export interface ClientUser {
   _id: string;
   userId?: number;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
-  provider: string;
+  provider: 'standard' | 'kakao' | 'apple' | 'guest';
+  providerId?: string;
+
   isAdmin?: boolean;
+  isGuest?: boolean;
   address?: string;
   addressDetail?: string;
-  isGuest?: boolean;
+
   kakaoId?: string;
+  apple?: {
+    sub: string;
+    emailRelay?: string;
+  };
 }
 
 interface AuthContextType {
@@ -34,6 +41,7 @@ interface AuthContextType {
   registerGuest: (name: string, phone: string, address: string, addressDetail?: string) => Promise<void>;
   logout: () => void;
   deleteUser: () => Promise<void>;
+  loginApple: (payload: { identityToken: string; authorizationCode: string }) => Promise<void>;
 }
 
 /*──────────────────────────────────────────────────────────
@@ -159,6 +167,21 @@ const loginKakao = async (accessToken: string, shippingAddr?: { baseAddress?: st
   }
 };
 
+const loginApple = async ({ identityToken, authorizationCode }: { identityToken: string; authorizationCode: string }) => {
+  try {
+    const { token: jwt, user } = await loginWithApple(identityToken, authorizationCode);
+
+    await SecureStore.setItemAsync('token', jwt);
+    setToken(jwt);
+    setCurrentUser(user);
+    setIsGuestMode(false);
+  } catch (err: any) {
+    console.error('Apple login error:', err.response?.data || err.message);
+    Alert.alert('Apple 로그인 실패', err.message || '다시 시도해주세요.');
+  }
+};
+
+
   /* Logout */
   const logout = async () => {
     try {
@@ -207,6 +230,7 @@ const loginKakao = async (accessToken: string, shippingAddr?: { baseAddress?: st
         setToken,
         loginEmail,
         loginKakao,
+        loginApple,
         registerGuest,
         logout,
         deleteUser,
