@@ -19,7 +19,7 @@ const kakaoIcon  = require('../assets/icons/kakao-icon.png');
 
 export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { loginEmail, loginKakao, token, isLoading, currentUser } = useAuth();
+  const { loginEmail, loginKakao, loginApple, token, isLoading, currentUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -85,12 +85,15 @@ const handleKakaoNativeLogin = async () => {
     );
   }
 
-  function loginApple(arg0: { identityToken: string | null; authorizationCode: string | null; }) {
-    throw new Error('Function not implemented.');
-  }
 
-  return (
-    <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.container}>
+
+
+return (
+  <LinearGradient colors={['#d0eaff', '#89c4f4']} style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 32 }}
+      keyboardShouldPersistTaps="handled"
+    >
       <Image source={introLogo} style={styles.logo} />
       <Text style={styles.title}>SMART HOMECARE</Text>
       <Text style={styles.subTitle}>스마트홈케어</Text>
@@ -115,40 +118,45 @@ const handleKakaoNativeLogin = async () => {
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
 
-           {Platform.OS === 'android' && (
         <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoNativeLogin}>
           <Image source={kakaoIcon} style={styles.kakaoIcon} />
           <Text style={styles.kakaoText}>카카오로 로그인</Text>
         </TouchableOpacity>
-      )}
+    
 
-            {Platform.OS === 'ios' || true ? (
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-          cornerRadius={8}
-          style={{ width: '100%', height: 44, marginTop: 12 }}
-          onPress={async () => {
-            try {
-              const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                  AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-              });
+      {Platform.OS === 'ios' && (
+  <AppleAuthentication.AppleAuthenticationButton
+    buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+    buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+    cornerRadius={8}
+    style={{ width: '100%', height: 44, marginTop: 12 }}
+    onPress={async () => {
+      try {
+        const credential = await AppleAuthentication.signInAsync({
+          requestedScopes: [
+            AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+            AppleAuthentication.AppleAuthenticationScope.EMAIL,
+          ],
+        });
 
-              // Pass to backend
-              await loginApple({
-                identityToken: credential.identityToken,
-                authorizationCode: credential.authorizationCode,
-              });
-            } catch (e) {
-              console.error('Apple Login Failed:', e);
-              Alert.alert('Apple 로그인 실패');
-            }
-          }}
-        />
-      ) : null}
+        // 🔗 Call real login handler from AuthContext
+        await loginApple({
+          identityToken: credential.identityToken!,
+          authorizationCode: credential.authorizationCode!,
+        });
+
+      } catch (e: any) {
+        if (e.code === 'ERR_CANCELED') {
+          console.log('Apple login canceled by user');
+        } else {
+          console.error('Apple login failed:', e);
+          Alert.alert('Apple 로그인 실패', e.message ?? '다시 시도해주세요.');
+        }
+      }
+    }}
+  />
+)}
+
 
       <Text style={styles.or}>또는</Text>
 
@@ -168,8 +176,9 @@ const handleKakaoNativeLogin = async () => {
         <Text style={styles.guestCTAText}>비회원으로 예약하기</Text>
         <Text style={styles.guestSubText}>로그인 없이 예약이 가능합니다</Text>
       </TouchableOpacity>
-    </LinearGradient>
-  );
+    </ScrollView>
+  </LinearGradient>
+);
 }
 
 const styles = StyleSheet.create({

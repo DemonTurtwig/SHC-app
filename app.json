@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.shc.appsmarthomecare",
-      "buildNumber": "1.1.0",
+      "buildNumber": "39",
       "appleTeamId": "V4K59G96Q4",
       "infoPlist": {
         "NSCameraUsageDescription": "이 앱은 예약을 위한 프로필 사진 기능에 카메라 접근 권한이 필요합니다.",
@@ -27,6 +27,7 @@
     },
     "android": {
       "package": "com.shc.smarthomecareapp",
+      "versionCode": 40,
       "adaptiveIcon": {
         "foregroundImage": "./asset/adaptive-icon.png",
         "backgroundColor": "#d0eaff"
